@@ -1,0 +1,273 @@
+**********************************************************
+	(fancy ascii in dox suck)
+
+	NetCommander/GLOBALFlink   v.4.1
+
+	A UrielSoft production
+
+This file is devoid of all that fancy crap that only
+prints ten lines and does an automatic new page with your
+printer - save a tree, print in 10 or 8 point
+
+*************************************************************
+
+		THE DOWN AND DIRTY SETUP
+
+(If upgrading from 4.0 to 4.1, just overwrite the NETWORK3.EXE from
+4.0 with the one in this archive.)
+
+1. Back up your network data, including FLINK.INI
+
+2. Unzip this archive into a temporary directory
+
+3. If you've never installed GFLINK/NETCOMMANDER before:
+   a. If you intend to use GFLINK, make sure you have an installed
+      (read: unzipped) copy of FLINK8.  Make sure you have a working
+      WWIV BBS with net3x installed.
+   b. Copy the net3x version of NETWORK3.EXE to NET3.EXE.
+   c. Overwrite the NETWORK3.EXE with the one in this
+      archive.  Please make sure that the net3x version
+      of NETWORK3.EXE still exists as NET3.EXE!
+   d. Execute NETWORK3.EXE without any switches.
+   e. Set PRIMENET in WWIV.INI (scroll to the bottom, it's been
+      added) to the network you wish to flink data over - probably
+      Filenet.
+   f. Search for "INI SETTINGS" in this document to find out what
+      the rest of them do.  (Hint: Changing GFLINK and AUTOCON to
+      "YES" and CHECKONLY to "NO" will probably set you straight.)
+
+4. If *UPGRADING* from an earlier version:
+   a. Delete GFLINK.EXE and NETCDR.INI from your BBS directory.
+   b. Overwrite the NETWORK3.EXE with the one in this
+      archive.  Please make sure that the net3x version
+      of NETWORK3.EXE still exists as NET3.EXE!
+   c. Execute NETWORK3.EXE without any switches.
+   d. Set PRIMENET in WWIV.INI (scroll to the bottom, it's been
+      added) to the network you wish to flink data over - probably
+      Filenet.
+   e. Execute NETWORK3 -UNINSTALL (to remove old GFLINK entries).
+   f. Search for "INI SETTINGS" in this document to find out what
+      the rest of them do.  (Hint: Changing GFLINK and AUTOCON to
+      "YES" and CHECKONLY to "NO" will probably set you straight.)
+
+*************************************************************
+
+	ALL THE OTHER INFORMATION
+
+1. What *is* this program?
+2. What's new?
+3. What are the possible commandline switches?
+4. What are the possible settings in WWIV.INI?
+5. How do the GFLINK routines work?
+6. Why should I be using the GFLINK routines?
+7. Errata
+
+Source Code/Bug Reports/Thanks/History/Legal Stuff are in LEGAL.DOC
+*************************************************************
+
+1. What *is* this program?
+
+NetCommander is an enhancement of NETWORK3.EXE for WWIV.  When
+network3 is called, instead of simply doing network analysis,
+NetCommander can also run the GLOBALFlink routines, Autocon!,
+and AutoSend to ensure that your network files are all up to
+date.
+
+This version of NetCommander incorporates the GLOBALFlink code in one
+executable.  GLOBALFlink has two primary purposes - to ensure speedy
+transmission of network data in NON-PPP-using networks (this is already
+achieved inside those networks by the use of Autocon! by CellarSoft) and
+to further reduce/destroy network hubs and server's workloads.  I mean,
+do *you* really want to keep track of a whole bunch of people's Flinks?
+
+GFLINK works in conjunction with the function of Autocon!, but does
+not require its use to function.  As bennies, it maintains all the
+connections it's made - deleting when neccessary, etc.  As further
+bennies, think of how easy it'll be to get a new node flinked!
+
+2. What's new?
+
+Quite a few things, actually.
+
+* Improved speed (4 seconds less on my 486/100) and far less disk I/O
+* Improved checking routines for GFLINK
+* Can use GFLINK routines with *ANY* network with a bbslist.0
+* Provides a list of all potential Flinks, including levels of confidence
+  and whether or not they are "marked flinkable".
+* FLINK.INI sorted by either nodes or networks
+* Allows you to just "check" GFLINK without altering network data
+* Better cleanup and uninstall routines
+* Smaller size and memory footprint
+* No separate INI file
+* Requires Autocon! version .96B and above (if you use Autocon!, that is).
+* Cap of 20 networks and 250 nodes in Primenet (though easily changeable
+  in the source!)
+* Sysop-definable utilities removed - AutoSend /REMOVE automatically run
+  if it exists in the BBS directory.
+
+3. What are the possible commandline switches?
+
+If you wish to do a network analysis of all WWIV-style networks
+(and get feedback from all of them), use the -D switch, like so:
+
+NETWORK3 -D
+
+If you wish to do a network analysis (and get feedback) on any
+network by name, type the name of the network (caps don't matter)
+as shown below:
+
+good commandlines                  bad commandlines
+NETWORK3 -filenet                  NETWORK3 -filesnet
+NETWORK3 -icEnEt                   NETWORK3 -IceNett
+
+You can also type only part of the network name.  NetCommander will
+perform network analysis (and send feedback) on *EVERY* network that
+matches.  So that "NETWORK3 -ww" would analyze and send feedback on
+WWIVnet and WWIVlink.
+
+The '-' switch character is important to include for this feature.
+
+You can uninstall the GlobalFlink portions at any time by simply typing
+
+NETWORK3 -UNINSTALL
+
+4. What are the possible settings in WWIV.INI?
+
+NetCommander automatically creates the [NETCDR] section at the end of
+WWIV.INI if it doesn't already exist.  In it are these INI SETTINGS:
+
+[NETCDR]
+;inserted by NetCommander v4.0
+; YES or NO - whether or not to run the GLOBALFlink routines
+GFLINK=YES
+; Only match nodes who have the ` identifier in BBSLIST.  See Errata
+; about this.
+MARKED_ONLY=YES
+; Should we run AutoCon? YES or NO
+; To use the -M switch, use "YES,MAIL"
+; To use the -N switch, use "YES,NEWS"
+AUTOCON=YES,NEWS
+; If set to "YES", will only produce BIGFLINK.DAT in the main BBS
+; directory.
+CHECKONLY=NO
+; How to sort FLINK.INI  NODE or NETWORK
+SORT=NODE
+; The name of your network to flink messages TO.
+; DO NOT SWITCH THIS BACK AND FORTH WITHOUT USING THE UNINSTALL SWITCH
+; BETWEEN CHANGES.  'nuff said.
+PRIMENET=FILENET
+
+5. How do the GFLINK routines work?
+
+The GFLINK routines clean up after themselves at the start of each run.
+
+All nodes - up to 250 - are read from the sysop-defined "primenet".
+The first two words of the BBS name, phone number, and registration
+number are snagged.  Then the other WWIV-style networks are read, and
+the nodes are compared.  Comparison is "scored" as follows:
+
+Matching registration number = 2 points
+Matching phone number = 1 point
+Matching name = 1 point
+
+If three points or more are achieved, a match is considered found.  This
+seems to be the best balance due to differences in node numbers and
+names between networks.  These are then compared to entries in FLINK.INI
+to ensure we're not making a duplicate entry.  It will recognize a
+reverse entry as a duplicate - that is, if it's about to add
+"Whoopnet 1 CrAzYnEt 5", it will consider "crazynet 5 whoopnet 1" to
+be a duplicate.  If it does not find a duplicate, it's added with
+the distinctive AaAaAaAa style of capitalization for the primenet.
+Then it is compared to anything in the appropriate CALLOUT.NET.  If
+there's already an entry there, it doesn't add it to CALLOUT.NET or
+CONNECT.99 (the idea being that you've already got a connect to them
+and just forgot to add the flink).  Otherwise, well, it does.  =)
+CALLOUT.NET entries have the distinctive _ identifier.  While it's
+doing this, it adds the entry to BIGFLINK.DAT along with the
+"confidence" and whether or not it is "marked flinkable".  The
+confidence is the score it recieved when checking - it should be only
+3 or 4.
+
+6. Why should I be using the GFLINK utilies?
+
+It should be noted that I use Filenet as an example throughout because
+it's how I Flink my data.  It's also very PPP-oriented, which (when
+combined with Autocon!) makes a vast majority of the nodes only one
+hop away - an ideal situation for GFLINK.
+
+First of all, even if you're NOT using GFLINK, it's easy to be
+a *recieving* node.  If you have DE555.EXE in your Filenet (or main
+BBS directory) you are *DONE* - all you need to do is to have your
+node "marked flinkable" with the ` identifier in the Filenet BBSlist.
+
+Consider - your average Filenet subboard, you may have a 0-3 day
+turnaround - but you still have the old 3-7 day turnaround with
+other WWIV networks - even though many of the servers are now a
+part of Filenet and the PPP project.  Why?  Let's examine -
+
+I (@207F) am subscribed to a sub hosted by (fictional) @69.BooNet
+which has netval turned on. Currently I'm flinking all my non-filenet
+traffic through, say, Frank (@1160F), so the path would look like this:
+
+207F --- 120F
+	 ???B --- additional boonet hubs --- 69B
+	 ^^^^
+this is the old flink method here...
+
+Now, let's say that @69.BooNet has joined Filenet - but I haven't
+been paying attention (and really, who watches the BBSlists like
+football stats?).  All of a sudden, after the next time I run
+GLOBALFlink, my routing for that subboard is:
+
+207F --- 69F
+	 69B
+
+Marked difference, eh?  Further, it dramatically increases the number
+of BBSes that are only one hop away - minimizing the damage that one
+BBS can cause to network traffic if it goes down or has problems, since
+you're connecting nearly directly with far more nodes.  It also gives
+you more connects WITHOUT HAVING TO WAIT FOR AN UPDATE.  Consider the
+following table, generated 23 Feb 2000.
+
+		       Average Hops (Total BBSes 1 Hop Away)
+	Network   Without GFLINK | With Gflink   |  With Gflink "ALL"
+	-------------------------------------------------------------
+	Icenet        3.69(2)    |    2.77       |   1.79(48)
+	-------------------------------------------------------------
+	WWIVlink      3.12(1)	 |    2.87       |   2.01(29)
+	-------------------------------------------------------------
+	WWIVnet       3.75(2)	 |    3.15       |   2.26(61)
+	-------------------------------------------------------------
+	TFAlink       2.85(1)	 |    2.67       |    2.22(11)
+	-------------------------------------------------------------
+	Terranet      3.02(1)	 |    2.86       |    1.89(42)
+	-------------------------------------------------------------
+	GLOBALnet     2.22(3)	 |    2.19       |    1.44(20)
+	-------------------------------------------------------------
+
+The "ALL" column reflects what could happen if all Filenet BBSes had
+the ` identifier.  Remember, all *they* have to do is to have one file
+in their Filenet or main BBS directory to recieve Flinked packets.
+Nothing else.
+
+7. Errata
+
+The options that most people might want to change that are currently
+hardcoded (number of networks, max number of nodes, and what utilities
+are run) are commented in the source.  Check the top of NETWORK3.C for
+keywords to search for.  I actually commented the code as I rewrote it
+(yes, ALL of it - except for the parts I didn't).
+
+Frank Reid has written a "Flink Checker".  Some of the matches that
+GFLINK makes his program currently thinks are bad.  Just keep this in
+mind.  His program was quite helpful in finding areas that *I* made
+mistakes - so don't think I'm bashing his efforts.  It cut the double-
+checking time down *IMMENSELY*, and helped identify some areas where I
+needed to work on the code herein.
+
+Regarding the MARKED_ONLY switch.  Well.  Um, I put it in there so you
+could see for yourself what a difference it makes - though you can also
+see that in BIGFLINK.DAT.  Nearly every system in Filenet should have
+DE555.EXE in their Filenet directory, y'know... but I wouldn't want to
+send Flinked traffic to the one who didn't.  USE AT YOUR OWN RISK.  I
+leave mine set to "YES".

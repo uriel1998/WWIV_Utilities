@@ -1,0 +1,70 @@
+**********************************************************
+	(fancy ascii in dox suck)
+
+	FTS'er v1.1
+
+*************************************************************
+
+Table of Contents
+
+	Unfortunately, we used it to eat dinner on after our regular
+	table broke.  So all that's left are some mismatched <TD>
+	and <TR> fields.  Sorry.
+
+*************************************************************************
+
+1.  Introduction
+
+	You run a Filenet BBS.  You maintain filelists.  NFT used to maintain
+	them for you.  Now it thinks they're all yet to be born.  Whatever 
+	shall you do?
+
+	Well, beside hooking me up with that gorgeous woman.
+
+	Oh, that's *NOT* a woman.  Um.  Nevermind.
+
+	Right - you're going to use FTS'er.  It's designed to be used as a 
+	daily event to keep your FTS (and .DIR files, which NFT uses) current
+	and neat and clean.  Though I can't make any promises about them 
+	brushing their teeth.
+
+Hardware/Software Requirements
+
+	A PC.
+	A working FTS network setup (e.g. - Filenet)
+
+2.  Setup (etupsay! etupsay!)
+
+	From the commandline (or batch file):
+
+	FTSER [path] -<a[age]/o[age]/m>
+
+	Use only one switch at a time. Things in [] are mandatory, <> are
+	optional.  Default is only purging lists from non-existent nodes.
+	It will also purge the dirfile.  
+
+	Omitting all these switches will get you the following help:
+
+þ Fts'er v1.0 - A UrielSoft Product
+í Usage is FTSER [path] -<a[age]/o[age]/m>
+í [path] is the DOS path for Filenet, withOUT trailing backslash.
+í Switches: 
+í -a = Request lists older than [age] and missing lists
+í -o = Request lists older than [age]
+í -m = Request missing lists
+í [age] is a value in days, and defaults to 30.
+í [age] == 0 requests all lists.
+í Lists from non-existent nodes are automatically purged.
+
+	FTS'er can be run from any location on the SAME DRIVE AS THE BBS.
+	If there is a need to switch drives and you want to code it, send
+	me a copy so I can re-release it, or you can ask nicely and I might
+	do it.  Maybe.  =)
+
+	FTS'er will find the appropriate filelist directory from FDLFTS.CFG
+	in the filenet directory *YOU SPECIFY*.  GIGO, people, GIGO.
+
+	FTS does not check to see if it has already requested a list.  So if
+	you run it twenty times a day with the -a switch, you'll request every
+	missing list twenty times a day.  If you set [age] to 1 each time, 
+	you're going to be requesting a *lot* of lists.

@@ -1,0 +1,155 @@
+**********************************************************
+	(fancy ascii in dox suck)
+
+	NETCOMMANDER/GLOBALFLINK 4.1
+
+	LEGALESE DOCUMENT
+
+This file is devoid of all that fancy crap that only
+prints ten lines and does an automatic new page with your
+printer - save a tree, print in 10 or 8 point
+
+*************************************************************
+
+Table of Contents
+
+1.  Legalese
+2.  License and the source code
+3.  Bug Reports
+4.  To-do List
+5.  Thanks
+6.  History
+
+1.  Legalese
+
+Copyright and Trademark Notice
+
+UrielSoft is both copyright and trademark Steven Saus 1997-9.
+
+Other brand and product names are trademarks or registered trademarks
+of their respective holders.  Failure on my part to expressly acknowledge
+thier copyright is in no way intended to construe a violation of thier
+copyright, and I will gladly include express mention of any copyright
+I've overlooked (contact me as with bug reports).
+
+#define disclaimer_std
+
+This program(s) is provided as is, without warranty, either expressed
+or implied.  The author specifically disclaims all other
+warranties, expressed or implied, including, but not limited to,
+any implied warranty of merchantability or fitness for a
+particular purpose.  Deal with it.
+
+2.  License Agreement and the Source Code
+
+This program and accompanying source code are being released under
+a "GNU-like" license:  This program(s) may be freely distributed,
+copied, or modified, provided that a copy of the source code
+accompanies the program.  Further, any modified distribution must
+be clearly labeled as such.
+
+The author respectfully requests that any modifications distributed
+be e-mailed to him so that these programs may grow.
+
+3.  Bug Reports
+
+	Bug reports/suggestions/support should be sent to:
+
+	surgicalsteel@mindspring.com (Surgical_Steel)
+
+	Please be specific in describing your problem, and remember, if
+	I can't reproduce it, I can't fix it.
+
+4.  To-do list
+
+	Figure out a way to "fake" a bbslist.0.  Low priority, though -
+        they are by definition small enough to maintain flinks by hand.
+
+5.  Thanks (all new! Wow!)
+
+	Frank Reid - For his flinkchk program.  Saved me *MUCH* time.
+	My mom - for helping me when I got stuck with an array problem
+	D-Warz and Ninja - For offering suggestions and keeping the
+	  faith in trying to get this sucker running.
+
+6. History:
+
+(prior to merging, N denotes NetCommander release, G GLOBALFlink)
+
+v4.1 Added fix to allow unregistered servers to be Gflinked.  This works
+      by giving servers w/o a valid registration number a registration
+      number of 12111973 - longer than any regnum, but well within the
+      limits of a long variable. - 6 Mar 2000
+
+v4.0  Improved speed (4 seconds less on my 486/100) and far less disk I/O
+      Improved checking routines for GFLINK
+      Can use GFLINK routines with *ANY* network with a bbslist.0
+      Provides a list of all potential Flinks, including levels of confidence
+	and whether or not they are "marked flinkable".
+      FLINK.INI sorted by either nodes or networks
+      Allows you to just "check" GFLINK without altering network data
+      Better cleanup and uninstall routines
+      Smaller size and memory footprint
+      No separate INI file
+      Requires Autocon! version .96B and above (if you use Autocon! at all).
+      Cap of 20 networks and 250 nodes in Primenet (though easily changeable
+	in the source!)
+      Sysop-definable utilities removed - AutoSend /REMOVE automatically run
+	if it exists in the BBS directory.
+      -29 Feb 2000
+
+v3.6 Added the "EXACT_MATCH" tag for riskier Gflink matching
+
+v3.5 Release of source code.
+     Changed modifier to '`' for detecting Flinkable nodes.
+     Streamlined uninstall procedure for ease-of-use.
+	- 21 Jul 1999
+
+v3.00-b2 Support "new" Autocon, different spawn routines - 09 Dec 1997
+
+v3.00-b1  GLOBALFlink dependent on NetCommander
+       File sharing support added
+       INI support added
+       Gives up a decent number of timeslices as it cycles through
+       Fewer open files at one time
+       A bunch more small tweaks
+
+Gv1.10 Actually creates a FLINK.INI (whoops!)
+       Adds '99' to BBSLIST.0 correctly (the ~line sometimes threw it)
+       Skips networks without BBSLIST.0
+       Adds = identifier to CALLOUT.NET
+       Reads what BBSLISTs to use according to BBSLIST.0, not dir search
+       Compares CALLOUT.NET entries by NUMBER, not string comparison
+       Additional "dummychecking" throughout code
+       Stop looking through lists even AFTER flink found
+	- 26 August 1997
+
+Nv2.00 Bugfix due to system() calls instead of spawn() calls.  No memory
+       errors.  Added configuration utility and writing NETCMDR.CFG
+       in binary mode instead of text-editable NETCMDR.INI mode. 26 Jun 97
+
+Nv1.51 Bugfix with stream closures, ensured that locks were due to 20/0
+       instead of NetCommander.  Added diagnostic mode and simple mode.
+       22 Jun 97
+
+Nv1.5  Discovery of two easy ways to make v1.0 infinitely loop - fixed.
+       Hard-coded Autocon! and GLOBALFlink calls into NetCommander, with
+       NET3 calls to ALL networks after GLOBALFlink runs - but only with
+       feedback on the original network.  Added BBS path detection. 15 Jun 97
+
+Nv1.00 Initial inception/idea of NetCommander while messing with GLOBALFlink
+       code.  Wrote it while taking a break from GLOBALFlink.  =) 12 Jun 97
+
+Gv1.01 Pre-emptive fix to a potential problem with flinks over non-filenet 
+       systems, remove neccessity to damn near delete flink.ini before 
+       installing. - 22 May 1997
+
+Gv1.00 Initial creation of GLOBALFlink.  Automatically rewrites FLINK.INI,
+       searches out networks on its own, creates alternate CONNECT.99 in
+       NON-Filenet directories to mess with regular network routing as
+       little as possible, updates CALLOUT.NET, BBSLIST.0.
+				-13 May 1997
+
+
+
+

@@ -1,0 +1,14 @@
+UrielSoft Products:
+
+LSTARC10.ZIP - List Archiver for Pegasys e-mail
+MATRIX.ZIP - Matrix emulator in a DOS window!
+CRSR20.ZIP - Cleans up CR/LF problems, removes extra blank lines
+0CLEAN10.ZIP - Removes 0 byte files
+DIZTEXT.ZIP - Creates file_id.diz for Gutenberg Etexts
+FAKEDSZ.ZIP - Creates CEXYZ commandlines from DSZ commandlines
+SPLTMAIL.ZIP - Splits > 32k text e-mail for PPP project
+PRAYER.ZIP - Prayer Wheel
+HTMLLIST.ZIP - Create HTML bbslist /* SOURCE ONLY */
+FIW292BG.ZIP - FIW for the PPP project; FTN network e-mail transfer
+NETCDR41.ZIP - Network3 preprocessor and GlobalFlink.  VERY useful.
+FTSER11.ZIP - Filenet Filelist maintainer/requester
