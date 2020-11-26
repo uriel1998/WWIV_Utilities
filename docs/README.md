@@ -28,3 +28,10 @@ These are new.  :)
 * browse-ansi and browse-ansi-preview: Uses fzf to let you browse the ANSI art in a directory and get a preview. Usage: `browse-ansi /path/to/directory`
 
 * Converters: Each indicates the direction of conversion in the filename, e.g. `escape-to-ascii-and-pipe.sh` converts ANSI art (with ANSI escape codes) to ASCII characters with "pipe codes" for coloration.  Please note that the conversion table for characters is optimized for the ones in the menuset I'm putting together, so not all codes are currently implemented.  Usage: `escape-to-ascii-and-pipe.sh < ANSIFILE.ANS > OUTFILE.ASC` or `escape-to-ascii-and-pipe.sh < ANSIFILE.ANS` for output to STDOUT
+
+For example, this main menu went from 
+![ANSI example](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/main-ans.png "Example output")
+
+to 
+
+![ASCII PIPE example](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/main-pipe.png "Example output")
