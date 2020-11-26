@@ -16,11 +16,13 @@ There are several mod files for WWIV 4.24 in /WWIV-424-MODS. These have NOT been
 
 # ANSI Art Utilities
 
-These are new.  :) 
+These are new.  :)  They are also *rough*, and due to the many possible variations 
+of how these files may be encoded or what line endings may have, manual tweaking 
+of output is practically *guaranteed*.  Works in progress.
 
-* ansilove 
+* [ansilove](https://www.ansilove.org/)
 * fzf
-* iconv
+* iconv (node-iconv works)
 * feh
 
 * ansi-preview-creator.sh : Creates PNG images of all ANSI/ASCII art in a directory using ansilove.  Usage: `ansi-preview-creator.sh /path/to/directory`
