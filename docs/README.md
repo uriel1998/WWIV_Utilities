@@ -18,7 +18,8 @@ There are several mod files for WWIV 4.24 in /WWIV-424-MODS. These have NOT been
 
 These are new.  :)  They are also *rough*, and due to the many possible variations 
 of how these files may be encoded or what line endings may have, manual tweaking 
-of output is practically *guaranteed*.  Works in progress.
+of output is practically *guaranteed*.  Works in progress.  You may wish to check out
+[showdocs-wombat](http://uriel1998.github.io/showdocs-wombat/) for another implementation.
 
 * [ansilove](https://www.ansilove.org/)
 * fzf
