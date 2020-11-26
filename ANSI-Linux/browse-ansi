@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+FD_FIND=$(which fdfind)
+
+
+##############################################################################
+# Show the Help
+##############################################################################
+display_help(){
+    echo "###################################################################"
+    echo "#  quite-intriguing [-h|-g|-p|-r] [QUERY]"
+    echo "# -h show help "
+    echo "# -g GUI interface only. Default is CLI/TUI. "
+    echo "# NOTE: gui display of results is a bit wonky for some reason. "
+    echo "# -p Prefetch and compile options. "
+    echo "# -r Rebuild available options and run (raw mode). "
+    echo "# QUERY (optional) starts with search for QUERY (assumes TUI mode)"
+    echo "###################################################################"
+}
+
+
+
+if [[ -d "$1" ]];then
+    dirname=${1%/}
+
+    if [ -f "$FD_FIND" ];then
+        Choices+=$(fdfind -a -e ans -e asc -e diz -e nfo -e txt . ${dirname})
+        
+    else
+        Choices+=$(find -H ${dirname} -type f -iname "*.ans" -or -iname "*.asc" -or -iname "*.diz" -or -iname "*.txt")
+    fi
+    Choices+="\n"
+
+    SelectedImage=$(echo -e "$Choices" | fzf --no-hscroll --multi --border --ansi --no-bold --header "Which Reaction?" --preview 'showdocs {}' --preview-window=top:75% | realpath -p )
+    echo "${SelectedImage}"
+fi
+
+
+#--preview-window=right:60%

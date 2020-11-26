@@ -1,0 +1,20 @@
+#!/bin/bash
+
+Instring="$@" 
+
+
+COULD THIS NOT JUST BE A CALL TO SHOWDOCS????
+
+show_ansiart (){
+    if [ "$GUI" == "1" ];then
+        tmpfile3=$(mktemp /tmp/showdocs-wombat.XXXXXXXXXXXX.${extension})
+        ansilove -o ${tmpfile3} ${infile}
+        feh ${tmpfile3} -x -B black -g --insecure --geometry=600x600+15+60
+        rm ${tmpfile3}
+    else
+        iconv -f 437 "$infile" | pv --quiet --rate-limit 7000
+    fi
+}
+
+Command=$(echo "$Instring" | sed 's/ (/./g' | sed 's/)//g' | sed 's/:man:/:man -Pcat:/g' | awk -F ':' '{print $2 " " $1}')
+eval "$Command" 
