@@ -1,0 +1,212 @@
+ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º Mod File Name : SURGE03.424          Mod Author: Surgical Steel            ºÛ
+º Difficulty    : şş********  [Easier than omelets]       207.filenet        ºÛ
+º WWIV Version  : 4.24a                                  7510.icenet         ºÛ
+º Mod Date      : 18 Jul 1997                           35750.wwivlink       ºÛ
+º Files Affected: QWK.C                                  5084.wwivnet        ºÛ
+º Description   : Create a To: for QWK packets           7500.tfalink        ºÛ
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½Û
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+==============================================================================
+This mod is writen for registered WWIV sysops.  No one else has any business
+using it.  If you're not registered, leave this be.  If you're not in an
+FTSC network (Fidonet, SpeakEasy) and using WWIVToss, this mod will have
+limited usefulness to you.
+==============================================================================
+Extended Description:
+
+	Everyone's heard people ask for a To: structure in WWIV.  We've
+	had wonderful little kludges for online messaging.  Yet, somehow,
+	people always forget QWK users.
+
+	I've always used QWK since early on, no matter what kind of BBS.
+	Hence, it's important to me.  I've also noticed that a goodly
+	number of the active users on FTSC bulletin boards (Fidonet, etc)
+	ALSO use QWK packets, due to the high volume of mail available.
+
+	Unfortunately, WWIV's QWK sucks.  The [diamond]0QWKFrom: will
+	fry WWIVToss's fix to put in a To: string, when you download a
+	packet, every message is addressed to ALL, and the like.
+
+	So I figured I'd start fixing it.  Here's my efforts so far.
+
+==========================================================================
+Disclaimer:
+
+	I didn't do it, no one saw me do it, and I'm sure as hell not
+	responsible for the stuff on your hard drive.
+
+	Modder beware!  <boogedy!>
+
+	This code has been tested on my *heavily* modified BBS.
+=========================================================================
+UPGRADING FROM PREVIOUS VERSION OF SURGE03.424
+
+	There is no previous version of SURGE03.424
+
+=========================================================================
+KEY:
+
+	/**/ Changed line
+	/*+*/ Added line
+	/*-*/ Removed line
+
+	No prefix means the line is unchanged.
+
+<my instructions to you are in these brackets>
+
+==========================================================================
+
+STEP ONE:
+
+	Back up yer source!!!!!!!!  Don't become a statistic!
+
+==========================================================================
+STEP TWO:
+
+	<Open QWK.C>
+
+#include <sys\timeb.h>
+#endif
+
+
+/**/char *QWKFrom="From: ";  /*surge03.424*/
+int qwk_bi_mode;
+static int qwk_percent;
+
+<skip down a lot>
+
+  // Took the annonomouse stuff out right here
+  /*Surge's note:  This is Wayne misspelling here, not I.  ;)*/
+  if(!qwk_info->in_email)
+    /*begin surge03.424*/
+/*+*/    {
+/*+*/    sprintf(qwk_info->qwk_rec.to,temp);
+/*+*/    get_to_name(temp, ss+cur, &len);
+/*+*/    if (strstr(temp,thisuser.name))
+/*+*/	  {
+/*+*/     sprintf(temp,"%s\0",thisuser.name);
+/*+*/     }
+/*+*/    if (strstr(temp,thisuser.realname))
+/*+*/     {
+/*+*/     sprintf(temp,"%s\0",thisuser.realname))
+/*+*/     }
+/*+*/    strupr(temp);
+/*+*/    temp[25]=0;
+/*-*/    /*strncpy(qwk_info->qwk_rec.to, "ALL", 3);*/
+/*+*/    strncpy(qwk_info->qwk_rec.to, temp, 25);
+/*+*/    }
+    /*end surge03.424*/
+  else
+  {
+
+<skip down some more>
+
+  // Only add address if it does not yet exist
+/**/ if(!strstr(text, QWKFrom))  /*surge03.424*/
+    insert_after_routing(text, address, len);
+
+<skip to end of file and add this entire function>
+
+/*begin block surge03.424*/
+char *get_to_name (char *wazoo, char *text, long *len)
+{
+unsigned pos = 0;
+char *p;
+int x;
+
+
+ while (pos<*len && !hangup)
+  {
+  if ((text[pos]=='.') && (text[pos+2]=='.') && (text[pos+4]=='.'))
+   {
+   while (text[pos]=='.')
+    {
+    pos++;
+    }
+   pos++; /*get past space*/
+   /*stripping trailing \ off of temp*/
+   p=wazoo;
+   for (x=0; x<=25 && (text[pos]!='' && text[pos]!= '\r' && text[pos]!= '\n');x++)
+    {
+    *p++ = text[pos];
+    pos++;
+    }
+    *p='\0';
+    strip_heart_colors(wazoo);
+    return(wazoo);
+   } else {
+   pos ++;
+   }
+  }
+ sprintf(wazoo,"ALL\0");
+ return(wazoo);
+ }
+/*end surge03.424*/
+
+
+<close QWK.C>
+==========================================================================
+STEP THREE:
+
+	Abide by the following notes:
+
+	THERE ARE NO NOTES!  Isn't this EASY?!?!?!?!
+
+
+==========================================================================
+STEP FOUR:
+
+	There is no step four, lest you proceed directly to five.
+
+==========================================================================
+STEP FIVE:
+
+	MAKE FCNS
+	MAKE
+
+==========================================================================
+STEP SIX:
+
+	if (!(thismodder.straightedge))
+		pop_open_a_beer();
+
+==========================================================================
+Thanks go to:
+
+	Morgul          My mom
+	for wwivtoss    for explaining why p=NULL didn't work
+
+
+	Support is available at the following:
+
+	Surgical Steel	1@207.filenet
+			1@7510.icenet
+			1@35750.wwivlink
+			1@5084.wwivnet
+			1@7500.tfalink
+	Surgical Steel (18:1757/0.0)
+	Surgical Steel (68:7571/0.0)
+	Surgical Steel (1:271/150.0)
+	surgicalsteel@mindspring.com (Surgical_Steel)
+
+==========================================================================
+URIELSOFT PRODUCTS:
+
+SURGE01A.424:Mod to search Filenet lists for a string, and request results
+SURGE02.424 :Mod to add a newuser menu to your BBS
+SURGE03.424 :(this file, silly!)
+FIW20.ZIP   :Send FTSC networks using the PPP project to other nodes
+GBLFLK10.ZIP:Automagically FLINK all networks to Filenet
+NETCDR20.ZIP:Automagically run utils w/NETWORK3 and more!
+
+	All files (save mods, which are posted every so often) are
+	requestable by FTS @ 207.FILENET, or FREQable from the above
+	FTSC addresses.
+
+IN THE WORKS:
+
+SURGE04.424:Allow long TO: fields for QWK   (ETA - Jul/Aug 97)
+FIW ver 2.5:Refinements                     (ETA - Aug/Sep 97)
+==========================================================================

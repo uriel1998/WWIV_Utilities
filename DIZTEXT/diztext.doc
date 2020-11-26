@@ -1,0 +1,63 @@
+**********************************************************
+	(fancy ascii in dox suck)
+
+	DIZText 1.0
+	
+
+This file is devoid of all that fancy crap that only
+prints ten lines and does an automatic new page with your
+printer - save a tree, print in 10 or 8 point
+
+*************************************************************
+
+Table of Contents
+
+1.  What is DIZText, and why should I use it?
+2.  What do I need to use DIZText?
+3.  How do I use it?
+4.  It doesn't work the way I like!
+
+***********************************************************************
+
+                WARNING FROM THE AUTHOR
+
+	If you choose not to read this doc, and have a
+	problem, and STILL don't RTFM when it's a condition described in
+	here... let's just say that I won't be very sympathetic, kay?
+
+*************************************************************************
+
+1.  What is DIZText, and why should I use it?
+
+	I'm a (gasp) BBS sysop, and like keeping etexts available, the
+	majority of them from the Gutenberg Project.  When my drive got
+	trashed not long ago, I got the files, but had to re-enter the
+	descriptions by hand because the ZIP files don't have a file_id.diz.
+
+	That bit.  So I wrote a quick-n-dirty util to put one in automagically.
+
+
+2.  What do I need to run DIZText?
+
+	A PC (not tested on or optimized for anything below a 386)
+	A Project Gutenberg-tm Etext
+	A copy of PkZip somewhere in your path
+
+
+3.  How do I use it?
+
+	Put DIZTEXT.EXE in the directory holding the Etexts, all of which 
+	should have the extension ".TXT".  Run DIZTEXT.  If it cannot identify
+	the title from one of the keywords (it actually searches for the line
+	*after* the title - the "This file should be named" bit), it won't
+	touch it at all.  Otherwise, it'll write a quick-n-dirty FILE_ID.DIZ,
+	and zip them into an archive with the original filename.  For example,
+	200010.txt would be zipped, along with the FILE_ID.DIZ, into 
+	200010.ZIP.  If a zipfile is created, the original is removed.
+
+
+4.  It doesn't work the way I like!
+
+	The C source code is included.  Have fun. 
+
+==========================================================================

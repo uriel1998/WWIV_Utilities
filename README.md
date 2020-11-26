@@ -12,6 +12,8 @@ FTSER11.ZIP - Filenet Filelist maintainer/requester
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 
+There are several mod files for WWIV 4.24 in /WWIV-424-MODS. These have NOT been tested against the 5.x codebase!
+
 # ANSI Art Utilities
 
 These are new.  :) 

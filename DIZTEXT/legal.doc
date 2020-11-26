@@ -1,0 +1,71 @@
+**********************************************************
+	(fancy ascii in dox suck)
+
+	DIZText 1.0
+
+	LEGALESE DOCUMENT
+
+This file is devoid of all that fancy crap that only
+prints ten lines and does an automatic new page with your
+printer - save a tree, print in 10 or 8 point
+
+*************************************************************
+
+Table of Contents
+
+1.  Legalese
+2.  License and the source code
+3.  Bug Reports
+4.  Credits/Thanks
+5.  To-do List
+6.  History
+
+1.  Legalese
+
+Copyright and Trademark Notices
+
+UrielSoft is both copyright and trademark Steven Saus 1997-9.
+Project Gutenberg is a trademark of (I believe) Professor
+        Michael S. Hart at the Project Gutenberg Association at
+        Illinois Benedictine College (the "Project"). 
+PKZIP is a copyright and trademark of PKWARE
+
+Other brand and product names are trademarks or registered trademarks
+of their respective holders.  Failure on my part to expressly acknowledge
+thier copyright is in no way intended to construe a violation of thier
+copyright, and I will gladly include express mention of any copyright
+I've overlooked (contact me as with bug reports).
+
+#define disclaimer_std
+
+	This program(s) is provided as is, without warranty, either expressed
+	or implied.  The author specifically disclaims all other
+	warranties, expressed or implied, including, but not limited to,
+	any implied warranty of merchantability or fitness for a
+	particular purpose.
+
+2.  License Agreement and the Source Code
+
+	This program and accompanying source code are being released under
+	a "GNU-like" license:  This program(s) may be freely distributed,
+	copied, or modified, provided that a copy of the source code
+	accompanies the program.  Further, any modified distribution must
+	be clearly labeled as such.
+
+	The author respectfully requests that any modifications distributed
+	be e-mailed to him so that these programs may grow.
+
+4.  Credits/Thanks
+
+	Kudos to:
+
+	The Gutenberg Project, in toto.  Great job, y'all.
+
+
+5.  To-do list
+
+	Possibly add switches in for different archivers.
+
+6.  History
+
+        1.0 - Release to public.  (23 Apr 1998)

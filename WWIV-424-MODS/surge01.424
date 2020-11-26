@@ -1,0 +1,255 @@
+ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º Mod File Name : SURGE01A.424          Mod Author: Surgical Steel            ºÛ
+º Difficulty    : şş********  [Easier than omelets]       207.filenet        ºÛ
+º WWIV Version  : 4.24a                                  7510.icenet         ºÛ
+º Mod Date      : 18 Jul 1997                           35750.wwivlink       ºÛ
+º Files Affected: MMENU.C,BBSOVL1.C                      5084.wwivnet        ºÛ
+º Description   : Search for string in ALL L%%%%.FTS     7500.tfalink        ºÛ
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½Û
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+==============================================================================
+This mod is writen for registered WWIV sysops.  No one else has any business
+using it.  If you're not registered, leave this be.  If you're not using the
+FTS software (i.e. - in Filenet) this mod isn't going to do you any good
+either.
+==============================================================================
+Extended Description:
+
+This mod was originally written to search all the filenet lists at once
+and echo out the results to the bbs, sort of like archie used to do for
+FTP sites.  However, I quickly realized
+that it'd be easy to just add a call to the FTS software to request the
+files as well.  If you're concerned about your users, see note [3] below.
+
+==========================================================================
+Disclaimer:
+
+	I didn't do it, no one saw me do it, and I'm sure as hell not
+	responsible for the stuff on your hard drive.
+
+	Modder beware!  <boogedy!>
+
+	This code has been tested on my *heavily* modified BBS.
+=========================================================================
+UPGRADING FROM PREVIOUS VERSION OF SURGE01.424
+
+	Replace the filenet_search(void) with the new one - it's an easy
+	block copy, and the text is formatted better, anyway.
+
+=========================================================================
+KEY:
+
+	/**/ Changed line
+	/*+*/ Added line
+
+==========================================================================
+
+STEP ONE:
+
+	Back up yer source!!!!!!!!  Don't become a statistic!
+
+==========================================================================
+STEP TWO:
+
+	Open MMENU.C and add a command to call this function.  Personally,
+	I use //FSEARCH in the transfer area, like so:
+
+  /* Anyone commands here */
+  if (strcmp(s,"WHO")==0) {
+    multi_instance();
+  }
+//SURGE01.424
+/*+*/    if (strcmp(s,"FSEARCH")==0) {
+/*+*/     filenet_search();
+/*+*/    }
+
+  /* download cosysop checks here */
+
+	Close MMENU.C
+==========================================================================
+STEP THREE:
+
+	Open up BBSOVL1.C.  At the TOP of the file, add the following:
+
+/*+*/ #include <dir.h>  //added SURGE01.424
+
+#define FRAME 7
+
+	Then jump down and add this function to the bottom of the file:
+
+/*Begin block SURGE01a.424*/
+
+void filenet_search (void)
+ {
+ FILE *f;
+ struct ffblk ffblk;
+ int done,doner,q;
+ short i;
+ char search[20],s[80],s1[80],name[20],node[10];
+ char *work;
+
+ chdir("c:\\bbs\\filenet\\filelist"); //see note [1]
+ nl();
+//printfile("FNETSCH"); //see note [2]
+ pausescr();
+ nl();
+ pl("7Please enter the string to search for:0");
+ input(search,20);
+ done=findfirst("*.*",&ffblk,0);//see note[1]
+ while (!done)
+  {
+  work = node;
+  sprintf(name,"%s",ffblk.ff_name);
+  f=fopen(name,"r");
+  for (i=1; i < 5 && name[i] != '.' && name[i] != '\0'; i++)
+   {
+   *work++ = name[i];
+   }
+  *work = '\0';  /*put the null byte at the end*/
+  sprintf(s,"Checking node %s",node);
+  outstr(s);
+  nl();
+  q=0;
+  while ((fgets(s,78,f)) && (s != NULL))
+   {
+   strupr(s);
+   if (!so())
+    {   //to keep non-sysops from seeing sysop/mod files
+    if ((strstr(s,"ğ")) || (strstr(s,"í")))
+     {
+     doner=0;
+     while ((!doner) && (!feof(f)))
+      {
+      fgets(s,78,f);
+      if (strstr(s,"ş"))
+       doner=-1;
+       }
+      }
+     }
+    if (!strstr(s,"ş"))
+     {
+     if (strstr(s,search))
+      {
+      q++;
+      work = s1;
+      for (i=0; i < 75 && s[i] != '\0'; i++)
+       {
+       if ((s[i] != '\r') && (s[i] != '\n'))
+	*work++ = s[i];
+       }
+      *work = '\0';
+      npr("5%s\n\r",s1);
+      work= NULL;
+      }
+     }
+    }
+   fclose(f);
+   if (q != 0)
+    {
+    npr("1Would you like to request any files from @%s ?0",node);
+    if (ny())
+     {
+     doner=0;
+     while (!doner)
+      {
+      nl();
+      npr("1Filename:");
+      input(s1,20);
+      chdir("C:\\bbs\\FILENET");
+      sprintf(s,"C:\\bbs\\FILENET\\FTSREQ -@%s -F%s",node,s1); //see note [1]
+      extern_prog(s, EFLAG_NOPAUSE | EFLAG_SHRINK);
+      nl();
+      pl("1Request another from this node?");
+      if (yn())
+       doner=0;
+       else
+       doner=-1;
+      }
+     }
+    nl();
+    work=NULL;
+    chdir("c:\\bbs\\filenet\\filelist"); //see note [1]
+    npr("2Process next list?");
+    if (ny())
+     done=findnext(&ffblk);
+     else
+     done=-1;
+    } else {
+    done=findnext(&ffblk);
+    }
+   }
+  chdir("c:\\bbs"); //see note [1]
+  }
+==========================================================================
+STEP FOUR:
+
+	Abide by the following notes:
+
+Note[1]:  Change this to the appropriate directory.  Just remember that
+ it's hardcoded whenever you get the urge to move everything around.
+
+Note[2]:  This is purely an optional bit - just make up a heart code/ansi
+ file (shouldn't matter due to the pausescr();) with whatever you want in
+ it.  Just put SOMETHING or comment out the code - otherwise it looks
+ sloppy.
+
+Note[3]:  If you just want this to be an archie-style routine, snip out
+ everything between the two note[3] comments, and uncomment the pausescr();
+ call.
+
+	Close BBSOVL1.C.
+==========================================================================
+STEP FIVE:
+
+	MAKE FCNS
+	MAKE
+
+==========================================================================
+STEP SIX:
+
+	if (!(thismodder.straightedge))
+		pop_open_a_beer();
+==========================================================================
+Thanks go to:
+	Wayne		Trader Jack
+	Deltigar        Topac
+	Morgul          My mom
+	Frank		Private Idaho (for the idea)
+
+	and last but not least, to Huey Dog, Lord of the Hounds, who got
+	me into this mess in the first place.  =)
+
+
+	Support is available at the following:
+
+	Surgical Steel	1@207.filenet
+			1@7510.icenet
+			1@35750.wwivlink
+			1@5084.wwivnet
+			1@7500.tfalink
+	Surgical Steel (18:1757/0.0)
+	Surgical Steel (68:7571/0.0)
+	Surgical Steel (1:271/150.0)
+	surgicalsteel@mindspring.com (Surgical_Steel)
+
+==========================================================================
+URIELSOFT PRODUCTS:
+
+SURGE01A.424:Mod to search Filenet lists for a string, and request results
+SURGE02.424 :Mod to add a newuser menu to your BBS
+SURGE03.424 :(this file, silly!)
+FIW20.ZIP   :Send FTSC networks using the PPP project to other nodes
+GBLFLK10.ZIP:Automagically FLINK all networks to Filenet
+NETCDR20.ZIP:Automagically run utils w/NETWORK3 and more!
+
+	All files (save mods, which are posted every so often) are
+	requestable by FTS @ 207.FILENET, or FREQable from the above
+	FTSC addresses.
+
+IN THE WORKS:
+
+SURGE01B.424:Refinements                    (ETA - Jul/Aug 97)
+SURGE04.424:Allow long TO: fields for QWK   (ETA - Jul/Aug 97)
+FIW ver 2.5:Refinements                     (ETA - Aug/Sep 97)
+==========================================================================

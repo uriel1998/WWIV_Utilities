@@ -1,0 +1,288 @@
+ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º Mod File Name : SURGE03A.424         Mod Author: Surgical Steel            ºÛ
+º Difficulty    : şş********  [Easier than omelets]       207.filenet        ºÛ
+º WWIV Version  : 4.24a                                  7510.icenet         ºÛ
+º Mod Date      : 18 Mar 1998                           35750.wwivlink       ºÛ
+º Files Affected: QWK.C                                  5084.wwivnet        ºÛ
+º Description   : Create a To: for QWK packets           7500.tfalink        ºÛ
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½Û
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+==============================================================================
+This mod is writen for registered WWIV sysops.  No one else has any business
+using it.  If you're not registered, leave this be.
+
+Revision A has a great deal of functionality for *ALL* WWIV sysops,
+whether they are part of a FTSC network or not.
+==============================================================================
+Extended Description:
+
+	Everyone's heard people ask for a To: structure in WWIV.  We've
+	had wonderful little kludges for online messaging.  Yet, somehow,
+	people always forget QWK users.
+
+	I've always used QWK since early on, no matter what kind of BBS.
+	Hence, it's important to me.  I've also noticed that a goodly
+	number of the active users on FTSC bulletin boards (Fidonet, etc)
+	ALSO use QWK packets, due to the high volume of mail available.
+
+	So, after writing the original mod, WWIVtoss fixed the bug, and I
+	realized that with a lot of work, 90% of the network mail could
+	be properly addressed in QWK packets, whether having gone through
+	WWIVtoss or not.
+
+	So I figured I'd start fixing it.  Here's my efforts so far.
+
+==========================================================================
+Disclaimer:
+
+	I didn't do it, no one saw me do it, and I'm sure as hell not
+	responsible for the stuff on your hard drive.
+
+	Modder beware!  <boogedy!>
+
+	This code has been tested on my *heavily* modified BBS.
+=========================================================================
+UPGRADING FROM PREVIOUS VERSION OF SURGE03.424
+
+	Replace the changed line:
+
+/**/char *QWKFrom="From: ";  /*surge03.424*/
+
+	with the original
+
+char *QWKFrom="[diamond]0QWKFrom:"
+
+	noting that [diamond] is ascii001 (the same as precedes routing
+	info in network messages), then change
+
+/**/ if(!strstr(text, QWKFrom+2))  /*surge03.424*/
+
+	back to
+
+if(!strstr(text, QWKFrom))
+
+	Both of these changes are BACK to stock source, to reflect
+	WWIVtoss being able to deal with the [diamond]0.
+
+	Block copy the new get_to_name function over the old version.
+
+	You're done!
+=========================================================================
+KEY:
+
+	/**/ Changed line
+	/*+*/ Added line
+	/*-*/ Removed line
+	/*S*/ Search for me
+
+	No prefix means the line is unchanged.
+
+<my instructions to you are in these brackets>
+
+==========================================================================
+
+STEP ONE:
+
+	Back up yer source!!!!!!!!  Don't become a statistic!
+
+==========================================================================
+STEP TWO:
+
+	<Open QWK.C>
+
+
+/*S*/  // Took the annonomouse stuff out right here
+/*+*/  /*Surge's note:  This is Wayne misspelling here, not I.  ;)*/
+  if(!qwk_info->in_email)
+    /*begin surge03A.424*/
+/*+*/    {
+/*+*/    sprintf(qwk_info->qwk_rec.to,temp);
+/*+*/    get_to_name(temp, ss+cur, &len);
+/*+*/    if (strstr(temp,thisuser.name))
+/*+*/	  {
+/*+*/     sprintf(temp,"%s\0",thisuser.name);
+/*+*/     }
+/*+*/    if (strstr(temp,thisuser.realname))
+/*+*/     {
+/*+*/     sprintf(temp,"%s\0",thisuser.realname))
+/*+*/     }
+/*+*/    strupr(temp);
+/*+*/    temp[25]=0;
+/*-*/    /*strncpy(qwk_info->qwk_rec.to, "ALL", 3);*/
+/*+*/    strncpy(qwk_info->qwk_rec.to, temp, 25);
+/*+*/    }
+    /*end surge03.424*/
+  else
+  {
+
+
+	<skip to end of file and add this entire function>
+
+/*begin block surge03.424*/
+char *get_to_name (char *wazoo, char *text, long *len)
+{
+unsigned long pos;
+char *p;
+int x,ch,found=0;
+ 
+for (pos=0; pos <*len && pos < 2048 && found == 0; pos ++)
+ {
+ /* BY:``Surgical Steel */
+ if ((text[pos+1]=='`')&&(text[pos]==':')&&(text[pos-1]=='Y'))
+  found=1;
+ if (text[pos]==' ')
+  {
+  ch=text[pos-1];
+  switch(ch){
+   case '.':
+    /* To....... Surgical Steel */
+    if ((text[pos-3]=='.')&&(text[pos-5]=='.'))
+     found=1;
+    break;
+   case ':':
+    if ((text[pos-2]=='y')||(text[pos-2]=='Y'))
+     {
+     /* By: Su  BY: Sur  by: sur  bY: sur */
+     if ((text[pos-3]=='b')||(text[pos-3]=='B'))
+      found=1;
+     }
+    if ((text[pos-2]=='o')||(text[pos-2]=='O'))
+     {
+    /* Reply to: Surg Response to: Surg  [diamond]0To: */
+     if ((text[pos-3]=='T') || (text[pos-3]=='t'))
+      found=1;
+     }
+    break;
+   case '-':
+   case '_':
+    /* these are supposed to catch some of the fancy ones - some do, some
+    don't.  The [diamond]To: is usually supplemented with them */
+    if (text[pos-7]==']')
+     {
+     if ((text[pos-22]=='t') || (text[pos-22]=='T'))
+      found=1;
+     if ((text[pos-11]=='y') || (text[pos-11]=='Y'))
+      {
+      if (text[pos+1]==':')
+       {
+       pos++;
+       pos++;
+       }
+      found=1;
+      }
+     }
+    break;
+   /* Reply to> */
+   case '>':
+    if ((text[pos-6]=='y')||(text[pos-6]=='Y'))
+     found=1;
+    break;
+   default:
+    break;
+   }
+  }
+ }
+if (found==1)
+ {
+ p=wazoo;
+ while (text[pos+1]==' ')
+  pos++;
+ if (text[pos+1]=='^K')  /*  NOTE ONE */
+  {
+  pos++;
+  pos++;
+  }
+ /* neccessary! */
+ if ((text[pos+1]=='`')&&(text[pos]!='`'))
+  pos++;
+ if (text[pos]=='`')
+  {
+  pos++;
+  pos++;
+  }
+ for (x=0;x<=25 && text[pos]!='\n'&&text[pos]!='\r'&&text[pos] !='#'&&
+   text[pos]!='`'&&text[pos]!='(';x++)
+/* LINEWRAP!!!!!!!!!!!!!!!!!!!!!!!! */
+  {
+  *p++=text[pos];
+  pos++;
+  }
+ *p='\0';
+ strip_heart_colors(wazoo);
+ return(wazoo);
+ } else {
+ sprintf(wazoo,"ALL\0");
+ return(wazoo);
+ }
+}  /*end surge3a.424 */
+
+
+<close QWK.C>
+==========================================================================
+STEP THREE:
+
+	Abide by the following notes:
+
+	Note One:  The ^K represents an ascii heart.
+
+
+==========================================================================
+STEP FOUR:
+
+	There is no step four, lest you proceed directly to five.
+
+==========================================================================
+STEP FIVE:
+
+	MAKE FCNS
+	MAKE
+
+==========================================================================
+STEP SIX:
+
+	if (!(thismodder.straightedge))
+		pop_open_a_beer();
+
+==========================================================================
+Thanks go to:
+
+	Morgul          My mom
+	for WWIVtoss    for explaining why p=NULL didn't work
+
+	Wayne   	The Entire Filenet Team (yay!)
+	for WWIV	for keeping this stuff alive
+
+	Support is available at the following:
+
+	Surgical Steel	1@207.filenet
+			1@7510.icenet
+			1@35750.wwivlink
+			1@5084.wwivnet
+			1@7500.tfalink
+	Surgical Steel (18:1757/0.0)
+	Surgical Steel (68:7571/0.0)
+	Surgical Steel (1:271/150.0)
+	surgicalsteel@mindspring.com (Surgical_Steel)
+
+==========================================================================
+URIELSOFT PRODUCTS:
+
+SURGE01A.424 :Mod to search Filenet lists for a string, and request results
+SURGE02.424  :Mod to add a newuser menu to your BBS
+SURGE03A.424 :(this file, silly!)
+FIW29A.RAR   :Send FTSC networks using the PPP project to other nodes
+NETCDR32.RAR :Automagically run utils w/NETWORK3 and more, includes GFLINK
+0CLEAN.RAR   :Cleans out 0 byte files
+HTMLLIST.RAR :Creates HTML BBSlist (source)
+PRAYER.RAR   :Automated "prayer wheel"
+
+	All files (save mods, which are posted every so often) are
+	requestable by FTS @ 207.FILENET, or FREQable from the above
+	FTSC addresses.
+
+IN THE WORKS:
+
+Automated QWK
+Pulling FIW into 3.0 (kicking and screaming)
+==========================================================================

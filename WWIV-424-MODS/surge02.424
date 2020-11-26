@@ -1,0 +1,219 @@
+ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º Mod File Name : SURGE02.424          Mod Author: Surgical Steel            ºÛ
+º Difficulty    : ş*********  [A straight block copy-     207.filenet        ºÛ
+º WWIV Version  : 4.24a        *IF* you read the notes]  7510.icenet         ºÛ
+º Mod Date      : 16 Jun 1997                           35750.wwivlink       ºÛ
+º Files Affected: MMENU.C                                5084.wwivnet        ºÛ
+º Description   : Add a newuser menu to WWIV             7500.tfalink        ºÛ
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½Û
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+==============================================================================
+This mod is writen for registered WWIV sysops.  No one else has any business
+using it.  If you're not registered, leave this be.
+==============================================================================
+Extended Description:
+
+	Adds a newuser menu to WWIV, hardcoded SL breakpoint.  Principle can
+	be applied to multiple SLs.
+
+	Amazingly, I wrote this mod entirely in DOS EDIT - with only one
+	error (I forgot a } early on).
+
+==============================================================================
+Disclaimer:
+
+	I didn't do it, no one saw me do it, and I'm sure as hell not
+	responsible for the stuff on your hard drive.
+
+	Modder beware!  <boogedy!>
+
+	This mod has been tested on virgin code.  We put a blanket down
+	first.
+
+=========================================================================
+KEY:
+
+	Begin and end comments annotate changes.
+
+==========================================================================
+
+STEP ONE:
+
+	Back up yer source!!!!!!!!  Don't become a statistic!
+
+==========================================================================
+STEP TWO:
+
+	Make this change to void mainmenu in MMENU.C
+
+
+  tleft(1);
+/*Begin SURGE02.424*/
+  if ((actsl<=25) && (live_user)) { /*change to your newuser SL*/
+   newuser();
+   }
+/*End SURGE02.424*/
+
+  if ((sysstatus_expert & thisuser.sysstatus)==0) {
+    if (menu_on() && no_clear == 0 && cleared != HYPCLEAR) {
+
+==========================================================================
+STEP THREE:
+
+	Put the following function at the TOP of MMENU.C  (feel free to add/
+	remove commands depending on how trusting you are).
+
+/*Begin SURGE02.424*/
+void newuser (void)
+{
+  char ch;
+  int done=0;
+  int key,i;
+  char temp[101], namepath[101];
+
+while(!done && !hangup) {
+ pausescr();
+ CLS();
+ printfile("NEWMENU");
+ nl();
+ strcpy(temp, "7[3O1ABCDFGIYU");
+ strcat(temp, "7] ");
+ outstr(temp);
+ mpl(1);
+ strcpy(temp, "O\r?ABCDFGUIYU");
+ key=onek(temp);
+ switch(key)
+  {
+  case 'A':
+   dialback();                          /* Comment #1 */
+   break;
+  case 'B':
+   bbslist();
+   break;
+  case 'C':
+   if (exist("SYSAVAIL.BAT")) {   /*Comment #2*/
+   extern_prog("SYSAVAIL.BAT", EFLAG_NOPAUSE | EFLAG_SHRINK);  /*Comment #2*/
+   } else                         /*Comment #2*/
+   helpl=3;
+   reqchat();
+   break;
+  case 'D':
+   helpl=4;
+   write_inst(INST_LOC_DEFAULTS,0,INST_FLAGS_NONE);
+   if (existprint(get_string(1031)))
+   pausescr();
+   defaults();
+   break;
+  case 'F':
+   write_inst(INST_LOC_FEEDBACK,0,INST_FLAGS_ONLINE);
+   feedback(0);
+   topscreen();
+   break;
+  case 'G':
+   helpl=28;
+   write_inst(INST_LOC_GFILES,0,INST_FLAGS_NONE);
+   existprint(get_string(1032));
+   gfiles();
+   rmenu = 300;
+   break;
+  case 'I':
+   nl();
+   existprint(get_string(1033));
+   pausescr();
+   existprint(get_string(1034));
+   pausescr();
+   nl();
+   npr("%s   (%s)\r\n",wwiv_version, wwiv_date);
+   nln(3);
+   pl("The author may be contacted at:");
+   nl();
+   pl("   Wayne Bell");
+   pl("   WWIV Software Services");
+   pl("   PO Box 720455");
+   pl("   McAllen, TX  78504-0455");
+   pausescr();
+   printfile ("MODS.MSG");  /*Comment #3*/
+   pausescr();
+   nl();
+   break;
+  case 'O':
+   nln(2);
+   write_inst(INST_LOC_LOGOFF,0,INST_FLAGS_NONE);
+   outchr(12);
+   outstr(get_string(29));
+   pl(ctim(timer()-timeon));
+   existprint(get_string(1036));
+   hangup=1;
+   done=1;
+   break;
+  case 'Y':
+   yourinfo();
+   break;
+  case 'U':
+   if (status.callstoday>0) {
+    if (sysinfo.flags & OP_FLAGS_SHOW_CITY_ST) {
+     if (syscfg.sysconfig & sysconfig_extended_info)
+      pl(get_string(1429));
+      else
+      pl(get_string(972));
+     } else {
+     pl(get_string(972));
+     }
+    i=okansi()?205:'=';
+    npr(charstr(79,i));
+    }
+   existprint(get_string(1035));
+   pausescr();
+   list_users(0);
+   break;
+   }
+  }
+}
+/*End SURGE02.424*/
+==========================================================================
+STEP FOUR:
+
+	Abide by the following notes:
+
+Comment 1:  I use a DialBackAccess mod that is VERY nice.  Comment this out
+	    if you want.
+Comment 2:  I use a nifty little program SYSAVAIL - this command runs it
+	    and displays different screens depending on chat status. Again,
+	    comment if you don't use it.
+Comment 3:  A little oneliner that prints a ansi/wwiv heart screen listing
+	    my mods.
+
+==========================================================================
+STEP FIVE:
+
+	Create a screen "NEWMENU" with the appropriate commands.
+
+==========================================================================
+STEP SIX:
+
+	MAKE FCNS
+	MAKE
+
+==========================================================================
+STEP SEVEN:
+
+	if (!(thismodder.straightedge))
+		pop_open_a_beer();
+
+==========================================================================
+Thanks go to:
+
+	MINE!  MINE!  I'M RICH!  I'M INDEPENDENTLY WEALTHY!
+
+	Support is available at the following:
+
+	Surgical Steel	1@207.filenet
+			1@7510.icenet
+			1@35750.wwivlink
+			1@5084.wwivnet
+			1@7500.tfalink
+	Surgical Steel (18:1757/0.0)
+	Surgical Steel (68:7571/0.0)
+	surgicalsteel@mindspring.com (Surgical_Steel)
+

@@ -1,0 +1,879 @@
+;;ÖÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ·
+º Mod File Name : SURGE03A.424         Mod Author: Surgical Steel            ºÛ
+º Difficulty    : þþþþþþ****  [Pay attention,silly]       207.filenet        ºÛ
+º WWIV Version  : 4.24a                                  7510.icenet         ºÛ
+º Mod Date      : 12 Apr 1998                           35750.wwivlink       ºÛ
+º Files Affected: QWK.C BBS.C COM.C CONIO.C LILO.C       5084.wwivnet        ºÛ
+º		  MMENU.C QWK1.C SYSOPF.C VARS.H         7500.tfalink        ºÛ
+º Description   : Automatic QWK via Inet E-mail       1:271/150 Fidonet      ºÛ
+ÓÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½Û
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+==============================================================================
+This mod is writen for registered WWIV sysops.  No one else has any business
+using it.  If you're not registered, leave this be.
+
+If you are not using the PPP project, this will have very limited usefulness
+to you.
+==============================================================================
+Extended Description:
+
+I'm moving soon, and I'm the last functioning WWIV bbs in this area.
+Believe it or not, some of my users actually want to continue to participate
+via QWK packets shipped as internet file attaches, so I wrote this up.
+In addition to the mods to the BBS source as well, it also utilizes
+three external utilities.  Instructions (and source) for these follows
+the mods.
+==========================================================================
+Disclaimer:
+
+	I didn't do it, no one saw me do it, and I'm sure as hell not
+	responsible for the stuff on your hard drive.
+
+	Modder beware!  <boogedy!>
+
+	This code has been tested on virgin source and my *heavily* modified
+	BBS.
+=========================================================================
+UPGRADING FROM PREVIOUS VERSION OF SURGE04.424
+
+	There is no previous version of SURGE04.424
+
+=========================================================================
+KEY:
+
+	/**/ Changed line
+	/*+*/ Added line
+	/*-*/ Removed line
+
+	No prefix means the line is unchanged.
+
+<my instructions to you are in these brackets>
+
+==========================================================================
+
+STEP ONE:
+
+	Back up yer source!!!!!!!!  Don't become a statistic!
+
+==========================================================================
+STEP TWO:
+
+<open QWK.C  At the top of void qwk_menu...>
+
+  while(!done && !hangup)
+  {
+/*+*/  if (autoqwk==0)  //surge04
+/*+*/   {               //surge04
+    if (rip_on()) {
+      if (so())
+
+<go down to the bottom of the function>
+
+	  sysoplog(get_stringx(1,128));
+	  qwk_sysop();
+	}
+	break;
+
+    }
+   /*begin block add of surge04.424 */
+   } else {
+   char temp2[101];  //define
+
+   key=1;  /* there should never be a ???000.REP */
+   sprintf(temp2,"c:\\bbs\\filenet\\fiw\\%03x%03x.REP",usernum,key); //note1
+   while(exist(temp2))  //loop to catch multiple rep packets.
+    {
+    qwk_system_name(temp);
+    strcat(temp, ".REP");
+    sprintf(namepath, "%s%s", QWK_DIRECTORY, temp);
+    movefile(temp2,namepath,1);
+    unlink(temp2);
+    upload_reply_packet();
+    remove_from_temp("*.*", syscfgovr.tempdir, 0);
+    remove_from_temp("*.*", syscfgovr.batchdir, 0);
+    key++;
+    sprintf(temp2,"c:\\bbs\\filenet\\fiw\\%03x%03x.REP",usernum,key); //note1
+    }
+   build_qwk_packet();
+   remove_from_temp("*.*", syscfgovr.tempdir, 0);
+   remove_from_temp("*.*", syscfgovr.batchdir, 0);
+  done=1;
+  break;
+  }
+ /*end surge04.424 */
+ }
+
+<in finish_qwk, about midway through...>
+
+  else while(!done && !hangup)
+  {
+    char new_dir[61];
+    char nfile[81];
+
+/*+*/  if (autoqwk==0)  //surge04
+/*+*/   {           //surge04
+    ansic(2);
+
+<go down a bit...>
+
+	qwk_info->abort=1;
+	done=1;
+      }
+    }
+    else
+      done=1;
+  /*begin block add surge04 */
+  } else {
+  char parem3[101],bound[20],c;  //define
+  FILE *in,*out;
+
+  sprintf(parem2,"\0");
+  qwk_system_name(parem2);
+  strcat(parem2, ".QWK");
+  sprintf(parem1, "%s%s", QWK_DIRECTORY, parem2);
+  f=0;
+  do {
+  f++;
+  sprintf(parem3,"c:\\bbs\\filenet\\mqueue\\AQWK%03x.%03x",usernum,f);  //note1
+  } while (exist(parem3));
+  sprintf(parem2,"%sAQWK%03x.%03x",QWK_DIRECTORY,usernum,f);
+  sprintf(parem3,"c:\\bbs\\MIME64.EXE");  //note1
+  if (!access(parem3,0))
+   {
+   sprintf(command,"%s -e %s %s",parem3,parem1,parem2);
+   extern_prog(command, EFLAG_NOPAUSE | EFLAG_SHRINK);
+   }
+  unlink(parem1);
+  sprintf(parem3,"c:\\bbs\\filenet\\mqueue\\AQWK%03x.%03x",usernum,f);  //note1
+  in = fopen(parem2,"rt");
+  out = fopen(parem3,"wt");
+  fprintf(out,"To: %s%s\n",thisuser.street,thisuser.note);
+  fprintf(out,"From: surgicalsteel@mindspring.com\n");  //note2
+  sprintf(parem1,"\0");
+  qwk_system_name(parem1);
+  strcat(parem1, ".QWK");
+  fprintf(out,"Subject: !AUTOQWK -> %s\n",parem1);
+  fprintf(out,"Message-ID :<%03x%f@autoqwk>\n",f+thisuser.msgpost+usernum+thisuser.logons,thisuser.timeon);
+  fprintf(out,"Reply-To: surgicalsteel@mindspring.com\n");   //note2
+  fprintf(out,"X-Mailer: AutoQwk4WWIV\n");
+  fprintf(out,"Mime-Version: 1.0\n");
+  sprintf(bound,"Message-Boundary-%03x%f",f+thisuser.msgpost+usernum+thisuser.logons,thisuser.timeon);
+  fprintf(out,"Content-type: Multipart/Mixed; boundary=%s\n",bound);
+  fprintf(out,"\n\n--%s\n",bound);
+  fprintf(out,"Content-type: text/plain; charset=US-ASCII\n");
+  fprintf(out,"Content-transfer-encoding: 7BIT\n");
+  fprintf(out,"Content-description: Mail message body\n");
+  fprintf(out,"\n\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+  fprintf(out,"This is a MIME64 encoded message made by AutoQWK for WWIV\n");
+  fprintf(out,"If your mailer doesn't support this type of encoding,\n");
+  fprintf(out,"you can decode the file attached using a program\n");
+  fprintf(out,"like 'munpack'.  'munpack' is available for anonymous\nFTP from ftp.andrew.cmu.edu:pub/mpack\n");
+  fprintf(out,"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+  fprintf(out,"--%s\n",bound);
+  fprintf(out,"Content-type: application/octet-stream; name=\x22%s\x22\n",parem1);
+  fgets(parem1,100,in);
+  fgets(parem1,100,in);
+  fprintf(out,"Content-transfer-encoding: BASE64\n");
+  c=0;
+  c=fgetc(in);
+  while ((!feof(in)))
+   {
+   fputc(c,out);
+   c=fgetc(in);
+   }/*done with copying MIME portion*/
+  fprintf(out,"--%s--",bound);
+  flushall();
+  fclose(in);
+  fclose(out);
+  unlink(parem2);
+  remove_from_temp("*.*", syscfgovr.tempdir, 0);
+  remove_from_temp("*.*", syscfgovr.batchdir, 0);
+  done=1;
+  }
+  /*end surge04 */
+ }
+}
+
+<close QWK.C>
+
+==========================================================================
+STEP THREE:
+
+<open QWK1.C and in upload_reply_packet...>
+
+  npr("%s%s%s", get_string(1563), name, get_string(1564));
+
+  sprintf(namepath, "%s%s", QWK_DIRECTORY, name);
+
+//  if(!qwk_bi_mode) //surge04.424
+/*+*/  if((!qwk_bi_mode)&&(autoqwk==0)) //surge04.424
+    do_it=yn();
+
+<go to the beginning of qwk_email_text>
+
+/*surge04.424 added char *to2 */
+void qwk_email_text(char *text, long size, char *title, char *to, char *to2)
+{
+  unsigned short sy,un;
+  long thetime;
+//  char qwk_address[201];
+  char *st;
+/*begin block surge04.424 */  //note3
+  short tries=0;
+
+try_qwkto_label:
+tries++;
+if (tries==2)  /*one*/
+ sprintf(to,"%s",to2);
+/*end block surge04*/
+  strupr(to);
+
+
+<hop down a bit....>
+
+      pl(get_string(651));
+      nl();
+      if ((un==0) && (sy==0))
+      {
+	pl(get_string(652));
+	pausescr();
+/*+*/	if (tries==1) //surge04.424
+/*+*/	 goto try_qwkto_label; //surge04.424
+	return;
+      }
+    }
+
+    if (!un && !sy)
+/*surge04.424 begin */
+     {
+	if (tries==1)  /*three*/
+	 goto try_qwkto_label;
+/*end*/
+      return;
+/*+*/      }
+
+    if (sy)
+
+<hop down a little bit...>
+
+    outstr(get_string(1566));
+
+/*surge04.424*/
+/*+*/    if (autoqwk==0)
+/*+*/     {
+    if(!yn())
+      return;
+/*+*/     }
+
+<in process_reply_dat...>
+
+    else
+    {
+      char blocks[7];
+      char to[201];
+/*+*/      char to2[201];  /*surge04.424*/
+      char title[26];
+      char tosub[7];
+
+
+<hop down...>
+
+	outstr(get_string(1568));
+/*surge04.424*/
+/*+*/        if (autoqwk==0)
+/*+*/         {
+	if(ny())
+	  to_email=1;
+/*+*/          } else
+/*+*/       to_email=1;
+      }
+
+<hop down...>
+
+	    s[0]=0;
+
+	    trimstr1(temp);
+	    strupr(temp);
+/*+*/	    sprintf(to2,"%s",temp);  //surge04.424
+/* commented out section by surge04.424
+	    if(strlen(s) != strlen(temp))
+	    {
+	      nl();
+	      ansic(3);
+	      npr("1) %s", to);
+	      nl();
+	      ansic(3);
+	      npr("2) %s", temp);
+	      nln(2);
+
+	      outstr(get_string(1569));
+	      mpl(1);
+
+	      x=onek("12");
+
+	      if(x=='2')
+		strcpy(to, temp);
+	    }
+end of comment out for surge04.424  */
+	  }
+	}
+      }
+
+      if(to_email)
+	qwk_email_text(text, size, title, to, to2);//to2 added surge04
+
+
+<hop down to qwk_post_text>
+
+	outstr(get_string(1570));
+	/*surge04.424 block begin*/
+	if (autoqwk==0)
+	 input(substr, 3);   //unchanged line
+	else
+	 substr[0]=='Q';
+/*end surge04.424*/
+	trimstr1(substr);
+
+<down just a little...>
+
+    {
+//      if (!qwk_iscan_literal(cursub))  //surge04.424
+/*+*/      if ((!qwk_iscan_literal(cursub)) && (autoqwk==0)) //surge04.424
+      {
+	nl();
+	outstr(get_string(1572));
+
+<hop down more...>
+
+    outstr(get_string(1566));
+/*surge04.424*/
+    if (autoqwk==0)
+     {
+/*end*/
+    if(ny())
+      done=1;
+    else
+      ++pass;
+/*surge04.424*/
+    } else
+     done=1;
+/*end*/
+  }
+
+
+<hop down a little more...>
+
+      f=qwk_iscan_literal(curlsub);
+
+//      if (f==-1)
+/*+*/      if ((f==-1)&&(autoqwk==0)) //surge04.424
+      {
+	nl();
+	outstr(get_string(1572));
+
+<tiny bit more>
+
+    // Anonymous
+//    if(a)
+/*+*/    if((a)&&(autoqwk==0)) //surge04.424
+    {
+      ansic(1);
+      outstr(get_string(485));
+
+<close QWK1.C>
+==========================================================================
+STEP FOUR:
+
+	There is no step four, lest you proceed directly to five.
+
+==========================================================================
+STEP FIVE:
+
+<open BBS.C>
+
+  ooneuser=0;
+  no_hangup=0;
+  ok_modem_stuff=1;
+  debuglevel=0;
+/*+*/  autoqwk=0;  //surge04.424
+  oklevel=OK_LEVEL;
+  noklevel=NOK_LEVEL;
+
+<skip down>
+
+    if ((s[0]=='-') || (s[0]=='/')) {
+      ch=upcase(s[1]);
+      switch(ch) {
+	/* SURGE04.424 block begin*/
+	case 'Q':
+	  autoqwk=atoi(&(s[2]));
+	  if (autoqwk==0)
+	   autoqwk++;
+	  this_usernum=autoqwk;  // logon as initial defined user, def. sysop
+	  if (!already_on)
+	    strcpy(curspeed, "115200");
+	  already_on=1;
+	  ooneuser=1;
+	  ok_modem_stuff=0;
+	  break;
+/*end surge04.424 */
+	case 'C':
+	  flow_control=1;
+	  break;
+
+<skip down>
+
+	  case 0:
+	  default:
+	    write_inst(INST_LOC_MAIN,usub[cursub].subnum,INST_FLAGS_NONE);
+/*surge04.424 begin*/
+	    if (autoqwk!=0)
+	     ammenu();
+	    else
+/*end surge04.424*/
+	    mainmenu();
+	  break;
+	}
+
+<close BBS.C>
+==========================================================================
+STEP SIX:
+
+<open COM.C>
+
+void pausescr(void)
+/* This will pause output, displaying the [PAUSE] message, and wait for
+ * a key to be hit.
+ */
+{
+  int i,i1,i2,oiia;
+  char *ss;
+
+ /* begin surge04.424 */
+   if (autoqwk!=0)
+    return;
+ /* end surge04.424 */
+
+<close COM.C>
+==========================================================================
+STEP SEVEN:
+
+<open CONIO.C>
+
+  movecsr(cx,cy);
+  if ((x) && (useron))
+/*surge04.424 */
+// if (nsln==0.0){
+/*+*/   if ((nsln==0.0) && (autoqwk==0)) {
+      nl();
+      pl(get_string(926));
+
+<close CONIO.C>
+==========================================================================
+STEP EIGHT:
+
+<open LILO.C>  //note four
+
+		prt(5,get_string(377));
+/*+*/	  if (autoqwk==0) {  //surge04.424
+	  if (yn()) {
+		if (rip_on()) {
+		  rip_cls();
+		  //rmenu = 300;
+		}
+		readmail();
+	  }
+/*+*/	 } //surge04.424
+	}
+  }
+  if (rip_on()) {
+
+<close LILO.C>
+==========================================================================
+STEP NINE:
+<open MMENU.C and put this entire void in>
+
+/*begin surge04.424 */
+void ammenu(void)
+{
+
+do {
+ write_inst(INST_LOC_CHUSER,0,INST_FLAGS_NONE);
+ chuser();
+ printf("%d %d %s\n",usernum,autoqwk,thisuser.note);
+ if ((usernum==autoqwk)&&(thisuser.note[0]=='@'))
+  {
+/*mimic logon stuff */
+  char s[255],s1[181],s2[81],*ss;
+  char speed[40],ch;
+  int i,f;//,dv,win,f;
+  long len,pos;
+  long l;
+
+  remove_from_temp("*.*", syscfgovr.tempdir, 0);
+  remove_from_temp("*.*", syscfgovr.batchdir, 0);
+
+  useron=1;
+  write_inst(INST_LOC_LOGON,0,INST_FLAGS_NONE);
+  if (live_user) {
+	reset_colors();
+	ansic(0);
+	outchr(12);
+  }
+  if ((thisuser.num_extended) > sysinfo.max_extend_lines)
+    thisuser.num_extended=sysinfo.max_extend_lines;
+  if ((thisuser.colors[8]==0) || (thisuser.colors[9]==0)) {
+	thisuser.colors[8]=6;
+	thisuser.colors[9]=3;
+  }
+  strcpy(xdate,date());
+  if (strcmp(xdate,thisuser.laston)==0)
+	++thisuser.ontoday;
+  else {
+	thisuser.ontoday=1;
+	thisuser.timeontoday=0.0;
+	thisuser.extratime=0.0;
+	thisuser.posttoday=0;
+	thisuser.etoday=0;
+	thisuser.fsenttoday1=0;
+  }
+  ++thisuser.logons;
+  cursub=0;
+  msgreadlogon=0;
+  if ((udir[0].subnum==0) && (udir[1].subnum>0))
+	curdir=1;
+  else
+	curdir=0;
+  curdloads=0;
+  if (actsl!=255) {
+	lock_status();
+	++status.callernum1;
+	++status.callstoday;
+	save_status();
+  }
+  if (rip_on()) {
+	strcpy (speed, curspeed);
+	strcpy (curspeed, "RIP/");
+	strcat (curspeed, speed);
+  }
+  sprintf(s,"%ld: %s %s %s   %s - %d (%d)",
+	status.callernum1,
+	nam(&thisuser,usernum),
+	times(),
+	date(),
+	curspeed,
+	thisuser.ontoday,
+	instance);
+  sprintf(s2,"%sLASTON.TXT",syscfg.gfilesdir);
+  ss=get_file(s2,&len);
+  pos=0;
+  if (ss!=NULL) {
+	if (!cs())
+	  for (i=0; i<4; i++)
+		copy_line(s1,ss,&pos,len);
+	i=1;
+	do {
+	  copy_line(s1,ss,&pos,len);
+	  if ((s1[0]) && live_user) {
+		if (i) {
+		  nln(2);
+		  pl(get_string(362));
+		  nl();
+		  if (sysinfo.flags & OP_FLAGS_SHOW_CITY_ST) {
+			if (syscfg.sysconfig & sysconfig_extended_info)
+			  pl(get_string(1429));
+			else
+			  pl(get_string(972));
+		  } else {
+			pl(get_string(972));
+		  }
+		  ansic(7);
+		  i=(okansi())?205:'=';
+		  pl(charstr(79,i));
+		  i=0;
+		}
+		pl(s1);
+	  }
+	} while (pos<len);
+  }
+
+  if ((actsl!=0) || (!incom)) {
+	sl1(0,"");
+	sl1(0,stripcolors(s));
+	sl1(1,"");
+
+	if (sysinfo.flags & OP_FLAGS_SHOW_CITY_ST) {
+	  if (syscfg.sysconfig & sysconfig_extended_info)
+		sprintf(s,"1%-6ld %-25.25s %-5.5s %-5.5s %-15.15s %-2.2s %-3.3s %-8.8s %2d\r\n",
+		  status.callernum1,
+		  nam(&thisuser,usernum),
+		  times(),
+		  date(),
+		  thisuser.city,
+		  thisuser.state,
+		  thisuser.country,
+		  curspeed,
+		  thisuser.ontoday);
+	  else
+		sprintf(s,"1%-6ld %-25.25s %-10.10s %-5.5s %-5.5s %-20.20s %2d\r\n",
+		  status.callernum1,
+		  nam(&thisuser,usernum),
+		  cur_lang_name,
+		  times(),
+		  date(),
+		  curspeed,
+		  thisuser.ontoday);
+	} else {
+	  sprintf(s,"1%-6ld %-25.25s %-10.10s %-5.5s %-5.5s %-20.20s %2d\r\n",
+		status.callernum1,
+		nam(&thisuser,usernum),
+		cur_lang_name,
+		times(),
+		date(),
+		curspeed,
+		thisuser.ontoday);
+	}
+
+	if (actsl!=0) {
+	  sprintf(s1,"%sUSER.LOG",syscfg.gfilesdir);
+	  f=sh_open(s1,O_RDWR | O_BINARY | O_CREAT, S_IREAD | S_IWRITE);
+	  if (f>-1) {
+		sh_lseek(f,0L,SEEK_END);
+		sh_write(f,(void *)s,strlen(s));
+		sh_close(f);
+	  }
+
+	  f=sh_open(s2,O_RDWR | O_BINARY | O_CREAT | O_TRUNC, S_IREAD | S_IWRITE);
+	  if (f>-1) {
+		pos=0;
+		copy_line(s1,ss,&pos,len);
+		for (i=1; i<8; i++) {
+		  copy_line(s1,ss,&pos,len);
+		  strcat(s1,"\r\n");
+		  sh_write(f,(void *)s1,strlen(s1));
+		}
+		sh_write(f,(void *)s,strlen(s));
+		sh_close(f);
+	  }
+	}
+  }
+
+  if (ss!=NULL)
+	bbsfree(ss);
+  timeon=timer();
+  if (live_user) {
+	topscreen();
+	if (rip_on())
+	  rip_menus();
+  }
+  if (rip_on()) {
+	rip_popup = -1;      /* Re-enable */
+	cleared = -1;
+  }
+  nscandate=thisuser.daten;
+  batchtime=0.0;
+  numbatchdl=numbatch=0;
+  setiia(90);
+  /* Handle case of first conf with no subs avail */
+  if ((usub[0].subnum==-1) && (okconf(&thisuser))) {
+	for (curconfsub=0;
+		 (curconfsub<subconfnum) &&
+		 (uconfsub[curconfsub].confnum!=-1);
+		 curconfsub++) {
+	  setuconf(CONF_SUBS, curconfsub, -1);
+	  if (usub[0].subnum!=-1)
+		break;
+	}
+	if (usub[0].subnum==-1) {
+	  curconfsub=0;
+	  setuconf(CONF_SUBS, curconfsub, -1);
+	}
+  }
+  rip_cls();
+  autox = -1;
+  qwk_menu();
+  remove_from_temp("*.*", syscfgovr.tempdir, 0);
+  remove_from_temp("*.*", syscfgovr.batchdir, 0);
+  }
+ autoqwk++;
+ } while (autoqwk <= syscfg.maxusers);
+ write_inst(INST_LOC_LOGOFF,0,INST_FLAGS_NONE);
+ hangup=1;
+}
+
+<close MMENU.C>
+==========================================================================
+STEP TEN:
+
+<open SYSOPF.C and add the indicated lines in void chuser>
+
+void chuser(void)
+{
+  char s[81];
+  int i;
+/*many small lines here surge04.424*/
+/*+*/  if (autoqwk==0)
+/*+*/   {
+  if (!checkpw())
+    return;
+  if (!so())
+    return;
+  prt(2,get_string(328));
+  input(s,30);
+/*+*/} else {
+/*+*/  sprintf(s,"%d",autoqwk);
+/*+*/  }
+  i=finduser1(s);
+  if (i>0) {
+    write_user(usernum,&thisuser);
+    write_qscn(usernum,qsc,0);
+    read_user(i,&thisuser);
+    read_qscn(i,qsc,0);
+    usernum=i;
+    actsl=255;
+    sprintf(s,get_stringx(1,17),nam(&thisuser,usernum));
+    sysoplog(s);
+    changedsl();
+    topscreen();
+  } else
+    pl(get_string(8));
+}
+
+<close SYSOPF.C>
+==========================================================================
+STEP ELEVEN:
+
+Abide by the following notes:
+
+Note 1:  These are all hardcoded pathnames.  It should be a minor matter
+	 for someone with your modding skill to change these <g>.
+
+Note 2:  Likewise, the returnpath is likewise hardcoded.  Simply substitute
+	 your own email address.
+
+Note 3:  This section will *not* just affect AutoQwk! - if you wish to make
+	 it so, bracket bits of it with a test for autoqwk==0.  This bit
+	 automagically tries both the To: field and the QWKFrom (if the To
+	 fails) in uploaded e-mail, instead of having to try one or the
+	 other.
+
+Note 4:  You may very well need to alter bits of this section (or some of the
+	 others) if you have other mods in there that stop and ask for input.
+	 Use a test for autoqwk==0 like shown here to do so.
+
+==========================================================================
+STEP TWELVE:
+
+	MAKE FCNS
+	MAKE
+
+==========================================================================
+STEP THIRTEEN:
+
+UUdecode ICEPT.EXE (at the end of this file) and place it in your BBS
+directory.  UUdecode MIME64.EXE (at the end of this file) and also place
+it in your BBS directory. Create the subdirectory FIW off of your Filenet
+directory.
+==========================================================================
+STEP FOURTEEN:
+
+UUdecode NETWORK1.EXE (at the end of this file), rename your current
+NETWORK1.EXE to NET1.EXE, and place this file in your BBS directory.  If
+you are using FIW's NETWORK1, simply replace it with this one.
+==========================================================================
+STEP FIFTEEN:
+
+If you already have a FIW.INI, skip this step.  If you do not, create
+the file FIW.INI in your BBS directory with the following entry, where
+FILEDIR is your Filenet directory without trailing backslash:
+
+[DIRS]
+FILEDIR=C:\bbs\filenet
+==========================================================================
+STEP (whew!) SIXTEEN:
+
+Okay, here's the nuts and bolts.  For each user that you want to have
+this access, you need to go into //UEDIT and change thier address to thier
+e-mail username, and the sysop note to thier domain WITH THE PRECEDING "@"
+SIGN!  For example:
+
+Name: K-rad #153
+RN  : Joe Luser
+Strt: myusername
+City: My Real Town, VA  23608 (USA)
+PH  : 111-111-1111
+Datp: 0
+Age : 24 F  (04/07/74)
+Comp: Other
+PW  : KEWL
+Last: 04/18/98   04/15/98
+Msgs: P=7 E=0 F=0 W=0 D=0
+Log : 14  0  I=0
+UpDn: U=0-0k   D=0-0k
+Baud: 0
+Note: @mydomain.com
+SL  : 25
+DSL : 25
+Exem:
+AR  :
+DAR :
+
+Uedit :
+
+	This is used for both sending *and* recieving REP packets.  ICEPT
+checks all incoming e-mail for the subject line of !AUTOQWK, and when it
+finds it, searches it for the e-mail address.  It *must* match the one
+in the userrec, otherwise it will be thrown away - this was put in as a
+security measure.
+
+	Then, however frequently you see fit (I have mine as a daily
+external event from Front Door) run BBS -q.  It will automatically spool
+through the users, "logging on" those who are applicable, and uploading
+replies/sending out QWK mail.  I'd make sure your users also have default
+compressors and "max messages" set as well.
+==========================================================================
+STEP SEVENTEEN:
+
+	if (!(thismodder.straightedge))
+		pop_open_a_beer();
+
+==========================================================================
+Thanks go to:
+
+		The Entire Filenet Team (yay!)
+		for keeping this stuff alive
+
+	Support is available at the following:
+
+	Surgical Steel	1@207.filenet
+			1@7510.icenet
+			1@35750.wwivlink
+			1@5084.wwivnet
+			1@7500.tfalink
+	Surgical Steel (18:1757/0.0)
+	Surgical Steel (68:7571/0.0)
+	Surgical Steel (1:271/150.0)
+	surgicalsteel@mindspring.com (Surgical_Steel)
+
+==========================================================================
+URIELSOFT PRODUCTS:
+
+SURGE01A.424 :Mod to search Filenet lists for a string, and request results
+SURGE02.424  :Mod to add a newuser menu to your BBS
+SURGE03A.424 :Mod to add true To: structure to QWK packets
+SURGE04.424  :Automated QWK over internet mail
+FIW29A.RAR   :Send FTSC networks using the PPP project to other nodes
+NETCDR32.RAR :Automagically run utils w/NETWORK3 and more, includes GFLINK
+0CLEAN.RAR   :Cleans out 0 byte files
+HTMLLIST.RAR :Creates HTML BBSlist (source)
+PRAYER.RAR   :Automated "prayer wheel"
+
+	All files (save mods, which are posted every so often) are
+	requestable by FTS @ 207.FILENET, or FREQable from the above
+	FTSC addresses.
+
+IN THE WORKS:
+
+Pulling FIW into 3.0 (kicking and screaming)
+==========================================================================

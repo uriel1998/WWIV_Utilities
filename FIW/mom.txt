@@ -1,0 +1,86 @@
+Re: Question...
+aconite@juno.com (Linda S. Saus)
+Fri Jul 04 20:59:44 1997
+On Thu, 03 Jul 97 22:19:27 (EDT) surgicalsteel@mindspring.com
+(surgical_steel) writes:
+>     Gotta question - I just slapped the code for MIME encoding into a 
+>program
+>of mine, and instead of going through a *LOT* of reassignment of 
+>stuff, I took
+>advantige of the fact that the MIME routine's main looks like the 
+>below :
+>
+>void main( int nargs, char *cargs[] )
+>
+>     so I figure, no confusion there with argv[] and argc, right?  So, 
+
+But, you  can only have one main routine in any program executable...
+Also, nargs is the number of arguments being passed (+1), with the
+first argument  being the name of the program itself...So, you'll have to
+do some recoding - at least to rename main to something else.
+
+>having
+>seen where one can create an array for arguments when doing a spawnl 
+>call (such
+>as:
+>
+>char  *argu[] = {  "Something.exe", "arg1" , "arg2", NULL};
+
+What you really have here is an array of pointers to character strings
+(with the pointers being implicitly created for the strings in double
+quotes.
+>
+>     and then just pass that, I figure I'll do the same, right?  Well, 
+
+you do need the int argument
+
+it
+>doesn't work out quite that way (keeping in mind one of the things I'm 
+>passing
+>is name[13], defined before argu[]... so when I try to do:
+>
+>     char *argu[] = { "Argu0", name, NULL };
+
+It would help if you had included the error, but here are a couple of
+thoughts.
+
+if you are calling the routine for mime, say you've renamed the
+subroutine itself
+to mime, then you would call it by
+     mime (2, argu);
+
+Also, it may be that it is being picky about all the conversion it is
+doing for name...
+
+if you have    char name[25];
+then the compiler may be happier if you also have,
+
+char *myptr;
+
+myptr=name;
+
+That is, declare a pointer to a character string, assign it the address
+of name, and
+then use myptr in the values for argu.
+
+A tip - just include the declaration of argu in the program (comment out
+the
+calls to the mime stuff, and the mime function prototype and see if the
+compiler complains about the declaration (other than telling you that it
+is not used)- if it passes this, then put back in the prototype for the
+mime function, try to compile that, and
+finally , put the call back in.
+
+>
+>it works just fine in the IDE, 
+I'm don't know what the IDE is...
+
+but when I try to do an external 
+>compile, it
+>SCREAMS at me like a banshee with a megaphone... wassup?  I don't 
+>understand...
+>
+Include some error messages if possible if you need more help.
+
+Mom
+
