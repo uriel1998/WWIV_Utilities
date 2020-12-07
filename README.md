@@ -1,6 +1,11 @@
 WWIV_Utilities
 ==============
 
+I'm reorganizing this repository; please excuse the dust. 
+
+If you're looking for the BASH scripts for networked BBS doors (BBSList and DoorParty),
+that's the folder "networked-bbs-doors", with instructions inside that folder.
+
 A collection of utilities I wrote for the WWIV BBS system.  These are old, and designed for Windows systems (3.1 - XP).  Largely presented for historical and educational reasons.
 
 FAKEDSZ.ZIP - Creates CEXYZ commandlines from DSZ commandlines

@@ -65,6 +65,20 @@ while read line; do
     sed 's@\x1B\[0;46m@|19@g' | \
     sed 's@\x1B\[0;41m@|20@g' | \
     sed 's@\x1B\[0;45m@|21@g' | \
+    sed 's@\x1B\[00;30m@|00@g' | \
+    sed 's@\x1B\[00;34m@|01@g' | \
+    sed 's@\x1B\[00;32m@|02@g' | \
+    sed 's@\x1B\[00;36m@|03@g' | \
+    sed 's@\x1B\[00;31m@|04@g' | \
+    sed 's@\x1B\[00;35m@|05@g' | \
+    sed 's@\x1B\[00;33m@|14@g' | \
+    sed 's@\x1B\[00;37m@|15@g' | \
+    sed 's@\x1B\[00;40m@|16@g' | \
+    sed 's@\x1B\[00;44m@|17@g' | \
+    sed 's@\x1B\[00;42m@|18@g' | \
+    sed 's@\x1B\[00;46m@|19@g' | \
+    sed 's@\x1B\[00;41m@|20@g' | \
+    sed 's@\x1B\[00;45m@|20@g' | \
     sed 's@\x1B\[30;0m@|00@g' | \
     sed 's@\x1B\[34;0m@|01@g' | \
     sed 's@\x1B\[32;0m@|02@g' | \
