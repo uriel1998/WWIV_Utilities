@@ -75,9 +75,9 @@ assume you have placed it in `/home/wwiv/chains/doorparty`.
 
 3. Set up the door. For WWIV, the entries to change are:
 
-`A) Description  : Door Party`
-`B) Filename     : bash -c "./chains/doorparty/doorparty-link.sh -f %1 -s AA"`
-`F) Exec Mode:     STDIO`
+`A) Description  : Door Party`  
+`B) Filename     : bash -c "./chains/doorparty/doorparty-link.sh -f %1 -s AA"`  
+`F) Exec Mode:     STDIO`  
 
 **IMPORTANT** - the variable after `-s` is your system tag, as assigned by DoorParty.
 
@@ -113,9 +113,9 @@ appropriate.
 
 3. Set up the door. For WWIV, the entries to change are:
 
-`A) Description  : BBSLink`
-`B) Filename     : bash -c "./chains/bbslink/bbslink.sh -f %1"`
-`F) Exec Mode:     STDIO`
+`A) Description  : BBSLink`  
+`B) Filename     : bash -c "./chains/bbslink/bbslink.sh -f %1"`  
+`F) Exec Mode:     STDIO`  
 
 Additional command-line options for `bbslink.sh` are:
 
