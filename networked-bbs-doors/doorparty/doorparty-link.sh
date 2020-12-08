@@ -95,7 +95,7 @@ function show_help() {
 }
 
 if [ -z $splashscreen ];then
-    if [ ! -f ${splashscreen} ];then
+    if [ -z $splashscreen ] || [ ! -f ${splashscreen} ];then
         if [ "$colors" = "True" ];then
             echo "${BLUE}###############################################${RESTORE}"        
             echo "${LGRAY}You are entering${RESTORE}"
@@ -110,7 +110,11 @@ if [ -z $splashscreen ];then
             echo "###############################################"
         fi
     else
-        cat ${splashscreen}  # not sure if this will work, or if i need to use one of my helpers
+        if [ -z $throttle ];then
+            cat ${splashscreen}
+        else
+            cat ${splashscreen} | throttle -k 14.4  
+        fi
     fi
 fi
 
