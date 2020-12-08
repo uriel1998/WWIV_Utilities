@@ -42,23 +42,16 @@ daemon running on the same machine as the BBS to minimize risk.
 Optional:
 
 * [throttle](https://linux.die.net/man/1/throttle)
+
+If you wish to use `throttle` to emulate connection speeds, just ensure that 
+it is present in your `$PATH`. If it is not present, it will simply be skipped.
+
 * ANSI art loading screen for each script
-
-
-## 4. Installation
-
-Place the files where the BBS can find them. While they could technically all 
-exist in the same folder, just... just don't.  
-
-For BBSLink, edit the file `BBSLink.ini` to include your information as given 
-to you when your application was accepted.  Do not put anything else in that 
-file.
 
 If you do not wish to use the ANSI art files, delete or rename them. (They are 
 loaded by default if they exist).
 
-If you wish to use `throttle` to emulate connection speeds, just ensure that 
-it is present in your `$PATH`. If it is not present, it will simply be skipped.
+## 4. Installation
 
 ### Door Party
 
@@ -106,7 +99,7 @@ If you are using another BBS system that can pass the username, use the `-u`
 switch followed by the username variable.  You can also use this from the 
 command-line yourself, e.g. `doorparty-link.sh -u USERNAME -s AA`
 
-At present there is not a way to specify a specific door at runtime from Door Party.
+At present there is not a way to specify a specific door at runtime from Door Party *that I know of*.
 
 ### BBSLink
 
