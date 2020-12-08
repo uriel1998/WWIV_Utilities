@@ -23,7 +23,7 @@ work on an earlier BBSLink script](http://www.bbslink.net/sysop/linux.php).
 
 ## 2. License
 
-This project is licensed under the MIT. For the full license, see `LICENSE`.
+This project is licensed under the MIT license. For the full license, see `LICENSE`.
 
 ## 3. Prerequisites
 
