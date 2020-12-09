@@ -9,7 +9,7 @@ that's the folder `networked-bbs-doors`, with instructions inside that folder.
 
 
 ## Contents
- 1. [Historical](#1-historical
+ 1. [Historical](#1-historical)
  2. [ANSI-Linux](#2-ansi-linux)
  3. [networked-bbs-doors](#3-networked-bbs-doors)
  4. [bbs-weather](#4-bbs-weather)
