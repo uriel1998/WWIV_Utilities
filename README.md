@@ -1,45 +1,58 @@
-WWIV_Utilities
-==============
+# WWIV_Utilities
 
-I'm reorganizing this repository; please excuse the dust. 
+Please note that since there are multiple scripts, you will want to point your 
+RSS reader at [recent commits](https://github.com/uriel1998/WWIV_Utilities/commits/master.atom) 
+for this repository to stay up to date.
 
 If you're looking for the BASH scripts for networked BBS doors (BBSList and DoorParty),
-that's the folder "networked-bbs-doors", with instructions inside that folder.
+that's the folder `networked-bbs-doors`, with instructions inside that folder.
 
-A collection of utilities I wrote for the WWIV BBS system.  These are old, and designed for Windows systems (3.1 - XP).  Largely presented for historical and educational reasons.
 
-FAKEDSZ.ZIP - Creates CEXYZ commandlines from DSZ commandlines
-SPLTMAIL.ZIP - Splits > 32k text e-mail for PPP project
-HTMLLIST.ZIP - Create HTML bbslist
-FIW292BG.ZIP - FIW for the PPP project; FTN network e-mail transfer
-NETCDR41.ZIP - Network3 preprocessor and GlobalFlink.  VERY useful.
-FTSER11.ZIP - Filenet Filelist maintainer/requester
+## Contents
+ 1. [Historical](#1-historical
+ 2. [ANSI-Linux](#2-ansi-linux)
+ 3. [networked-bbs-doors](#3-networked-bbs-doors)
+ 4. [bbs-weather](#4-bbs-weather)
+ 5. [bbscaptcha](#5-bbscaptcha)
 
-This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 
-There are several mod files for WWIV 4.24 in /WWIV-424-MODS. These have NOT been tested against the 5.x codebase!
+## 1. Historical
 
-# ANSI Art Utilities
+![WWIV v4 logo](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/wwiv-4.jpg "WWIV v4 logo")
 
-These are new.  :)  They are also *rough*, and due to the many possible variations 
-of how these files may be encoded or what line endings may have, manual tweaking 
+All "historical" utitilies (e.g. for v4.2.4) are in the `WWIV-v4x` directory and 
+described in the README in that directory.  Please note that they may be under 
+different licenses than the "modern" (v5+) utilities.
+ 
+![WWIV v5 logo](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/wwiv-5.jpg "WWIV v5 logo") 
+ 
+## 2. ANSI-Linux
+
+These are some utilities to preview or convert ANSI/ASCII art on a linux system. 
+They are also *rough*, and due to the many possible variations of how these 
+files may be encoded or what line endings may have, manual tweaking 
 of output is practically *guaranteed*.  Works in progress.  You may wish to check out
-[showdocs-wombat](http://uriel1998.github.io/showdocs-wombat/) for another implementation.
+[showdocs-wombat](http://uriel1998.github.io/showdocs-wombat/) for another (and 
+cleaner) implementation. Detailed instructions in the README in the directory.
 
-* [ansilove](https://www.ansilove.org/)
-* fzf
-* iconv (node-iconv works)
-* feh
+## 3. networked-bbs-doors
 
-* ansi-preview-creator.sh : Creates PNG images of all ANSI/ASCII art in a directory using ansilove.  Usage: `ansi-preview-creator.sh /path/to/directory`
+BASH scripts to connect to networked BBS door games - specifically BBSLink and 
+Door Party - providing a large userbase and many already-installed doors. Designed
+for WWIV 5+ with CHAIN.TXT, but will work with anything that can pass a 
+username and/or usernumber.  Detailed instructions in the README in the directory.
 
-* browse-ansi and browse-ansi-preview: Uses fzf to let you browse the ANSI art in a directory and get a preview. Usage: `browse-ansi /path/to/directory`
+## 4. bbs-weather
 
-* Converters: Each indicates the direction of conversion in the filename, e.g. `escape-to-ascii-and-pipe.sh` converts ANSI art (with ANSI escape codes) to ASCII characters with "pipe codes" for coloration.  Please note that the conversion table for characters is optimized for the ones in the menuset I'm putting together, so not all codes are currently implemented.  Usage: `escape-to-ascii-and-pipe.sh < ANSIFILE.ANS > OUTFILE.ASC` or `escape-to-ascii-and-pipe.sh < ANSIFILE.ANS` for output to STDOUT
+BASH scripts to operate as a door providing weather and forecast for the 
+BBS *and* optionally for any location entered by a user.  Relies on a modified 
+version of [weather.sh](https://uriel1998.github.io/weather.sh/).  Detailed 
+instructions in the README in the directory.  **coming soon**
 
-For example, this main menu went from 
-![ANSI example](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/main-ans.png "Example output")
+## 5. bbscaptcha
 
-to 
-
-![ASCII PIPE example](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/main-pipe.png "Example output")
+BASH & Python3 scripts to provide a comprehensive CAPTCHA autovalidation system 
+as a door for WWIV 5+. Can provide ANSI/ASCII captcha, audio captcha, and 
+email code validation. Currently awaiting additional code in WWIV codebase 
+and/or modification. Detailed 
+instructions in the README in the directory. **coming soon**
