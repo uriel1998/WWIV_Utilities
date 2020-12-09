@@ -2,7 +2,7 @@
 
 Please note that since there are multiple scripts, you will want to point your 
 RSS reader at [recent commits](https://github.com/uriel1998/WWIV_Utilities/commits/master.atom) 
-for this repository to stay up to date.
+for this repository so you are aware of additions, changes, and updates
 
 If you're looking for the BASH scripts for networked BBS doors (BBSList and DoorParty),
 that's the folder `networked-bbs-doors`, with instructions inside that folder.
@@ -24,6 +24,10 @@ All "historical" utitilies (e.g. for v4.2.4) are in the `WWIV-v4x` directory and
 described in the README in that directory.  Please note that they may be under 
 different licenses than the "modern" (v5+) utilities.
  
+--- 
+
+## Modern WWIV (v5+) Utilities
+
 ![WWIV v5 logo](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/docs/wwiv-5.jpg "WWIV v5 logo") 
  
 ## 2. ANSI-Linux
