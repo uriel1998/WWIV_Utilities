@@ -55,6 +55,8 @@ instructions in the README in the directory.  **coming soon**
 
 ## 5. bbscaptcha
 
+**NOT PRODUCTION READY**
+
 BASH & Python3 scripts to provide a comprehensive CAPTCHA autovalidation system 
 as a door for WWIV 5+. Can provide ANSI/ASCII captcha, audio captcha, and 
 email code validation. Currently awaiting additional code in WWIV codebase 
