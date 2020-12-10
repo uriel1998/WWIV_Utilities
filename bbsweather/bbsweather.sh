@@ -6,17 +6,18 @@
 # TODO - actually check for cache, duh
 
 scriptpath=$(readlink -f "${0}" | xargs dirname)
+datapath="$scriptpath/data"
 chafa_bin=$(which chafa)
-
+boxes_bin=$(which boxes)
 ##############################################################################
 # Cleanup of pending forecasts > 119 minutes old
 ##############################################################################
 
-find $scriptpath/data -maxdepth 1 -mmin +119 -type f ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.gif" ! -iname "*.rc" -exec rm -f {} \;
+find $datapath -maxdepth 1 -mmin +119 -type f ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.gif" ! -iname "*.rc" -exec rm -f {} \;
 
 
-if [ -f "$PWD/bashcolors" ];then
-    source "$PWD/bashcolors"
+if [ -f "$scriptpath/bashcolors" ];then
+    source "$scriptpath/bashcolors"
     colors="True"
 fi
 
@@ -61,7 +62,7 @@ fi
 
 echo "$current" | sed 's@\xB0@ degrees @g' | sed 's@\xC2@@g' | sed 's@$@\x1B\[37m@' | sed -ne 's/.*/\x1B\[37m &/p' > $scriptpath/weather.txt
 
-boxes -i box -s 60 -d boxquote $scriptpath/weather.txt
+${boxes_bin} -i box -s 60 -d boxquote $scriptpath/weather.txt 2>/dev/null
 
 echo "Your forecast will be with you in just a moment..."
 
@@ -75,12 +76,11 @@ fi
 
 echo "$forecast" | sed 's@\xB0@ degrees @g' | sed 's@\xC2@@g' | sed 's@$@\x1B\[37m@' | sed -ne 's/.*/\x1B\[37m &/p' | cut -c -95 > $scriptpath/forecast.txt
 
-boxes -i box -s 60 -d boxquote $scriptpath/forecast.txt && sleep 5
-
+${boxes_bin} -i box -s 60 -d boxquote $scriptpath/forecast.txt 2>/dev/null && sleep 5 
 # is there a weather map file?
 if [ -f "$datapath"/noaa.gif ] && [ -f "$chafa_bin" ];then
-    $chafa_bin -s 80x25 ./northwest.jpg && chafa -s 80x25 ./southwest.jpg 
-    $chafa_bin -s 80x25 ./northeast.jpg && chafa -s 80x25 ./southeast.jpg 
+    ${chafa_bin} -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/northwest.jpg && chafa -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/southwest.jpg | sed 's/ /./g' 
+    ${chafa_bin} -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/northeast.jpg && chafa -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/southeast.jpg | sed 's/ /./g' 
     sleep 5
 fi
 

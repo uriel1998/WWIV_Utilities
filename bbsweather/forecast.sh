@@ -24,7 +24,7 @@ colors="False"
 # Reading in rc 
 ########################################################################
 scriptpath=$(readlink -f "${0}" | xargs dirname)
-ConfigFile="$scriptpath/weather_sh.rc"
+ConfigFile="$scriptpath/data/weather_sh.rc"
 
 if [ "$1" == "-r" ];then
     shift
@@ -40,8 +40,8 @@ if [ -f "$ConfigFile" ];then
     UseIcons=${line[3]}
     temp=${line[4]}
     if [ "$temp" = "True" ];then
-        if [ -f "$HOME/.bashcolors" ];then
-            source "$HOME/.bashcolors"
+        if [ -f "$scriptpath/bashcolors" ];then
+            source "$scriptpath/bashcolors"
             colors="True"
         else
             colors=""
@@ -83,8 +83,8 @@ option="$1"
     shift
     shift ;;    
     -c) 
-        if [ -f "$HOME/.bashcolors" ];then
-            source "$HOME/.bashcolors"
+        if [ -f "$scriptpath/bashcolors" ];then
+            source "$scriptpath/bashcolors"
             colors="True"
         fi
     shift ;;    
