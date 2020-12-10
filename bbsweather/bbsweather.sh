@@ -3,6 +3,17 @@
 # Need to specify temp/cache path so that the cache persists and you won't
 # have your API rate hammered by a jerk
 
+				echo "splitting"
+				convert "$file" -resize 2390x1280! /tmp/wallpaper1.jpg
+				nice -n 19 convert -crop 1366x768+0+0 /tmp/wallpaper1.jpg /tmp/wallpaper_left.jpg
+				nice -n 19 convert -crop 1024x1280+1366+0 /tmp/wallpaper1.jpg /tmp/wallpaper_right.jpg	
+
+# get weather map from NOAA
+# check if updated (see xplanet setup)
+#https://www.wpc.ncep.noaa.gov/noaa/noaa.gif
+# use chafa -s 80x25 to get a decent one, or rotate with exiftran
+# DO NOT ROTATE, UGH
+#exiftran -a -9  noaa.jpg -o noaa_r.jpg
 
 scriptpath=$(readlink -f "${0}" | xargs dirname)
 
