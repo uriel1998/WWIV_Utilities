@@ -12,7 +12,7 @@ chafa_bin=$(which chafa)
 # Cleanup of pending forecasts > 119 minutes old
 ##############################################################################
 
-find $scriptpath/data -maxdepth 1 -mmin +119 -type f ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.gif" -exec rm -f {} \;
+find $scriptpath/data -maxdepth 1 -mmin +119 -type f ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.gif" ! -iname "*.rc" -exec rm -f {} \;
 
 
 if [ -f "$PWD/bashcolors" ];then

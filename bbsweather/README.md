@@ -29,7 +29,7 @@ This project is licensed under the MIT license. For the full license, see `LICEN
 * chafa
 * python3
 * pip
-* https://uriel1998.github.io/weather.sh/ (included in this repo)
+* https://uriel1998.github.io/weather.sh/ (slightly modified; included in this repo)
 * boxes
  * OpenWeatherMap API key ([http://openweathermap.org/appid](http://openweathermap.org/appid)).
  * Bash shell ≥ 4.2.
@@ -56,7 +56,7 @@ it is present in your `$PATH`. If it is not present, it will simply be skipped.
 
 ### weather_sh.rc
 
-Copy (and edit, as appropriate) the `weather_sh.rc` file to `$HOME\.config\weather_sh.rc`.   
+Copy (and edit, as appropriate) the `weather_sh.rc` file to `data\weather_sh.rc`.   
 * The first line is the OpenWeatherMap API key  
 * The second line is your default location. (See note below)  
 * The third line is your default degree character (either `c` or `f`)  

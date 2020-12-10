@@ -23,7 +23,8 @@ colors="False"
 ########################################################################
 # Reading in rc 
 ########################################################################
-ConfigFile="$HOME/.config/weather_sh.rc"
+scriptpath=$(readlink -f "${0}" | xargs dirname)
+ConfigFile="$scriptpath/weather_sh.rc"
 
 if [ "$1" == "-r" ];then
     shift
