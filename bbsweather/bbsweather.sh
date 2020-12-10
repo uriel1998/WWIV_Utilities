@@ -2,26 +2,18 @@
 
 # Need to specify temp/cache path so that the cache persists and you won't
 # have your API rate hammered by a jerk
-
-				echo "splitting"
-				convert "$file" -resize 2390x1280! /tmp/wallpaper1.jpg
-				nice -n 19 convert -crop 1366x768+0+0 /tmp/wallpaper1.jpg /tmp/wallpaper_left.jpg
-				nice -n 19 convert -crop 1024x1280+1366+0 /tmp/wallpaper1.jpg /tmp/wallpaper_right.jpg	
-
-# get weather map from NOAA
-# check if updated (see xplanet setup)
-#https://www.wpc.ncep.noaa.gov/noaa/noaa.gif
-# use chafa -s 80x25 to get a decent one, or rotate with exiftran
-# DO NOT ROTATE, UGH
-#exiftran -a -9  noaa.jpg -o noaa_r.jpg
+# TODO - load asynchronously 
+# TODO - actually check for cache, duh
 
 scriptpath=$(readlink -f "${0}" | xargs dirname)
+chafa_bin=$(which chafa)
 
 ##############################################################################
 # Cleanup of pending forecasts > 119 minutes old
 ##############################################################################
 
-find $scriptpath/data -maxdepth 1 -mmin +119 -type f -exec rm -f {} \;
+find $scriptpath/data -maxdepth 1 -mmin +119 -type f ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.gif" -exec rm -f {} \;
+
 
 if [ -f "$PWD/bashcolors" ];then
     source "$PWD/bashcolors"
@@ -83,7 +75,15 @@ fi
 
 echo "$forecast" | sed 's@\xB0@ degrees @g' | sed 's@\xC2@@g' | sed 's@$@\x1B\[37m@' | sed -ne 's/.*/\x1B\[37m &/p' | cut -c -95 > $scriptpath/forecast.txt
 
-boxes -i box -s 60 -d boxquote $scriptpath/forecast.txt && sleep 10
+boxes -i box -s 60 -d boxquote $scriptpath/forecast.txt && sleep 5
+
+# is there a weather map file?
+if [ -f "$datapath"/noaa.gif ] && [ -f "$chafa_bin" ];then
+    $chafa_bin -s 80x25 ./northwest.jpg && chafa -s 80x25 ./southwest.jpg 
+    $chafa_bin -s 80x25 ./northeast.jpg && chafa -s 80x25 ./southeast.jpg 
+    sleep 5
+fi
+
 echo "Press any key to continue..."
 
 exit
