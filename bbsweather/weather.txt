@@ -1,0 +1,9 @@
+[37m Cache age: 43 seconds.[37m
+[37m Station: Dayton, US 39.76 / -84.19[37m
+[37m As Of: [00;33m2020-11-29 14:57 [0m[37m
+[37m Right Now: [00;36m Clear Sky[0m[37m
+[37m Temp: [00;36m53.87 degrees F[0m[37m
+[37m Pressure: [00;32m30.00in[0m[37m
+[37m Wind: [00;35m1.93mph[0m Gusts: [00;35m0.00mph[0m[37m
+[37m Humidity: [00;32m37%[0m[37m
+[37m Cloud Cover: [00;32m1%[0m[37m

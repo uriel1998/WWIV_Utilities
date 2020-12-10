@@ -1,0 +1,14 @@
+[37m Cache age: 43 seconds.[37m
+[37m Forecast for Dayton as of: [00;33m2020-11-29 14:58[0m [37m
+[37m [00;33m11/29@16:00[0m: [00;36m  Scattered Clouds[0m Temp:[00;36m51.96 degrees F[0m 
+[37m [00;33m11/29@19:00[0m: [00;36m  Broken Clouds   [0m Temp:[00;36m45.77 degrees F[0m 
+[37m [00;33m11/29@22:00[0m: [00;36m  Overcast Clouds [0m Temp:[00;36m43.19 degrees F[0m 
+[37m [00;33m11/30@01:00[0m: [00;36m  Light Rain      [0m Temp:[00;36m42.38 degrees F[0m 
+[37m [00;33m11/30@04:00[0m: [00;36m  Light Rain      [0m Temp:[00;36m40.01 degrees F[0m 
+[37m [00;33m11/30@07:00[0m: [00;36m  Moderate Rain   [0m Temp:[00;36m37.20 degrees F[0m 
+[37m [00;33m11/30@10:00[0m: [00;36m  Light Rain      [0m Temp:[00;36m36.87 degrees F[0m 
+[37m [00;33m11/30@13:00[0m: [00;36m  Snow            [0m Temp:[00;36m34.10 degrees F[0m 
+[37m [00;31m12/01@13:00[0m: [00;36m  Overcast Clouds [0m Temp:[00;36m31.21 degrees F[0m 
+[37m [00;31m12/02@13:00[0m: [00;36m  Clear Sky       [0m Temp:[00;36m34.30 degrees F[0m 
+[37m [00;31m12/03@13:00[0m: [00;36m  Light Rain      [0m Temp:[00;36m35.96 degrees F[0m 
+[37m [00;31m12/04@13:00[0m: [00;36m  Light Rain      [0m Temp:[00;36m37.54 degrees F[0m 
