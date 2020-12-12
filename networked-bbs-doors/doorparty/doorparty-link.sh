@@ -92,6 +92,7 @@ function show_help() {
     echo "  -s = Your SystemTag from DoorParty. Do NOT use brackets."
     echo "  -f = The path to CHAIN.TXT"
     echo "  -a = The path to optional ANSI file splash screen"
+    echo "  -d = The door ID desired (defaults to menu)"    
 }
 
 if [ -z $splashscreen ];then
@@ -120,9 +121,7 @@ fi
 
 sleep 3
 
-#TODO - this is returning [][fc]username
-
-commandstring=$(printf "rlogin -E -K -8 -l \[%s\]%s -p 9999 localhost" "${systemtag}" "${username}") # uncertain how to pass a specific door yet
+commandstring=$(printf "TERM=${directdoor} rlogin -E -K -8 -l \[%s\]%s -p 9999 localhost" "${systemtag}" "${username}") 
 eval ${commandstring}
 read
 
