@@ -53,6 +53,7 @@ fi
 echo "Your current conditions will be with you in just a moment..."
 
 current=$($scriptpath/weather.sh -l "$Location" -n -p $scriptpath/data)
+
 if [ "$?" -gt 0 ];then
     echo "There was an error finding the city. Please try again with"
     echo "the proper format, thanks!"
@@ -67,6 +68,7 @@ ${boxes_bin} -i box -s 60 -d boxquote $scriptpath/weather.txt 2>/dev/null
 echo "Your forecast will be with you in just a moment..."
 
 forecast=$($scriptpath/forecast.sh -l "$Location" -n -p $scriptpath/data )
+
 if [ "$?" -gt 0 ];then
     echo "There was an error finding the city. Please try again with"
     echo "the proper format, thanks!"
@@ -77,6 +79,8 @@ fi
 echo "$forecast" | sed 's@\xB0@ degrees @g' | sed 's@\xC2@@g' | sed 's@$@\x1B\[37m@' | sed -ne 's/.*/\x1B\[37m &/p' | cut -c -95 > $scriptpath/forecast.txt
 
 ${boxes_bin} -i box -s 60 -d boxquote $scriptpath/forecast.txt 2>/dev/null && sleep 5 
+
+echo "Weather map in ANSI!"
 # is there a weather map file?
 if [ -f "$datapath"/noaa.gif ] && [ -f "$chafa_bin" ];then
     ${chafa_bin} -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/northwest.jpg && chafa -s 78x25 --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $datapath/southwest.jpg | sed 's/ /./g' 

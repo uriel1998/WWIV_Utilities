@@ -30,12 +30,13 @@ This project is licensed under the MIT license. For the full license, see `LICEN
 **Apply and be accepted to DoorParty and/or BBSLink before beginning.**
 
 Most of the program requirements are installed by default on linux systems, but
-for DoorParty you will possibly need `rlogin-client`; install it on Debian/Ubuntu
-with `sudo apt install rlogin-client`.
+for DoorParty you will possibly need `rsh-redone-client`; install it on Debian/Ubuntu
+with `sudo apt install rsh-redone-client`.
 
 Please note that [RLOGIN is a security risk](https://www.ssh.com/ssh/rlogin) if 
-exposed to the internet.  Ensure that you have both your router and system firewalls 
-so that they will not accept connections from outside the LAN, and you should be 
+exposed to the internet (though the "redone-client" aims to fix that.  Ensure 
+that you have both your router and system firewalls so that they will not 
+accept connections from outside the LAN, and you should be 
 fine. It is for this reason that it is best practice to have the `doorparty-connector` 
 daemon running on the same machine as the BBS to minimize risk.
 
