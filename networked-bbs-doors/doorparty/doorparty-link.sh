@@ -65,7 +65,7 @@ if [ -z $splashscreen ];then
 fi
 
 if [ ! -z $doorfile ];then
-    if [ -z $username ];then
+    if [ -z "{$username}" ];then
         if [ ! -f ${doorfile} ];then
             echo "CHAIN.TXT not passed properly! Exiting!"
             exit 99
@@ -76,7 +76,7 @@ if [ ! -z $doorfile ];then
 fi
 
 
-if [ -z $username ];then
+if [ -z "${username}" ];then
     echo "No username! Exiting!"
     exit 99
 fi
@@ -121,7 +121,7 @@ fi
 
 sleep 3
 
-commandstring=$(printf "TERM=${directdoor} rlogin -E -K -8 -l \[%s\]%s -p 9999 localhost" "${systemtag}" "${username}") 
+commandstring=$(printf "TERM=${directdoor} rlogin -E -K -8 -l \[%s\]\"%s\" -p 9999 localhost" "${systemtag}" "${username}") 
 eval ${commandstring}
 read
 
