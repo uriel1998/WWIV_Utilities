@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#TODO - testing is clearly fubared
+#TODO - USE TOILET/FIGLET INSTEAD OF PYTHON
+# script/shadow/slant/small/smslant/standard/block/lean/big/smmono9/smmono12/smblock
+# pagga/emboss/future/smbraille  < - these are part of the standard fonts with 
+# sudo apt install figlet toilet toilet-fonts
+
+## wwivutil asv --key=VALUE USERNUMBER
 ##############################################################################
 # BBS Captcha / Autovalidator Script for WWIV 5+
 #
@@ -30,9 +37,12 @@ doorfile=""
 userSL=""
 scriptpath=$(readlink -f "${0}" | xargs dirname)
 source "$scriptpath/bbscaptcha.ini"
-email-logfile="$scriptdir/data/email-log.txt"
+if [ ! -f "$scriptpath/data/email_log.txt" ];then
+    touch "$scriptpath/data/email_log.txt"
+fi
+email_logfile="$scriptpath/data/email_log.txt"
 VERIFYCODE=""
-chafa_bin==$(which chafa)
+chafa_bin=$(which chafa)
 throttle_bin=$(which throttle)
 mutt_bin=$(which mutt)
 SHOWANSI=""
@@ -58,8 +68,13 @@ done
 # Verifying that setup is correct
 ##############################################################################
 
+echo "${doorfile}"
+sed -n '11p' ${doorfile}
+sed -n '1p' ${doorfile}
+sed -n '2p' ${doorfile}
+
 # If CHAIN.TXT is not passed, then this program doesn't know what their SL is
-if [ ! -z $doorfile ] || [ ! -f ${doorfile} ];then
+if [ ! -f ${doorfile} ];then
     userSL=""
 else
     userSL=$(sed -n '11p' ${doorfile})
@@ -155,7 +170,7 @@ function captcha_splashscreen() {
 
 function create_email () {
     
-    if [ ! -f $scriptdir/data/pending/$usernumber ];then
+    if [ ! -f $scriptpath/data/pending/$usernumber ];then
         if [ -f "${scriptpath}/captcha-email.ans" ];then
             SHOWANSI="${scriptpath}/captcha-email.ans"
             show_ansi
@@ -176,32 +191,32 @@ function create_email () {
         
         # VERY basic validation of format
         if [[ $entered-email =~ '(.+)@(.+)' ]] ; then     
-            UsedEmail=$(grep -c "^${entered-email}" "${email-logfile}")
+            UsedEmail=$(grep -c "^${entered-email}" "${email_logfile}")
             if [ $UsedEmail -ge 1 ];then
                 # They have already tried sending email with this address.
                 exit 98
             else
-                VERIFYCODE=$($scriptdir/bbscaptcha.py)
-                echo "$VERIFYCODE" > $scriptdir/data/pending/$usernumber
-                rm $scriptdir/out.wav
+                VERIFYCODE=$($scriptpath/bbscaptcha.py)
+                echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
+                rm $scriptpath/out.wav
                 
                 BBSName=$(sed -n '22p' ${doorfile})
                 Sysop=$(sed -n '23p' ${doorfile})
                 
-                echo "Hi! Someone entered this email address to verify on $BBSName ." > $scriptdir\data\building_email.txt
-                echo " " >> $scriptdir\data\building_email.txt
-                echo "If you did not request this validation, our apologies. You do not need to" >> $scriptdir\data\building_email.txt 
-                echo "do anything. " >> $scriptdir\data\building_email.txt
-                echo " " >> $scriptdir\data\building_email.txt
-                echo "If you *did* request validation, your code is at the bottom of this email." >> $scriptdir\data\building_email.txt 
-                echo "Log back into the BBS and enter the code into the verification area.  " >> $scriptdir\data\building_email.txt
-                echo "It expires one hour after it was issued, so don't delay!" >> $scriptdir\data\building_email.txt
-                echo " " >> $scriptdir\data\building_email.txt
-                echo "Your number is $VERIFYCODE" >> $scriptdir\data\building_email.txt
-                echo " " >> $scriptdir\data\building_email.txt
-                echo "Thanks, $Sysop, Sysop of $BBSName " >> $scriptdir\data\building_email.txt
+                echo "Hi! Someone entered this email address to verify on $BBSName ." > $scriptpath\data\building_email.txt
+                echo " " >> $scriptpath\data\building_email.txt
+                echo "If you did not request this validation, our apologies. You do not need to" >> $scriptpath\data\building_email.txt 
+                echo "do anything. " >> $scriptpath\data\building_email.txt
+                echo " " >> $scriptpath\data\building_email.txt
+                echo "If you *did* request validation, your code is at the bottom of this email." >> $scriptpath\data\building_email.txt 
+                echo "Log back into the BBS and enter the code into the verification area.  " >> $scriptpath\data\building_email.txt
+                echo "It expires one hour after it was issued, so don't delay!" >> $scriptpath\data\building_email.txt
+                echo " " >> $scriptpath\data\building_email.txt
+                echo "Your number is $VERIFYCODE" >> $scriptpath\data\building_email.txt
+                echo " " >> $scriptpath\data\building_email.txt
+                echo "Thanks, $Sysop, Sysop of $BBSName " >> $scriptpath\data\building_email.txt
                 
-                echo "${entered-email}" >> ${email-logfile}
+                echo "${entered-email}" >> ${email_logfile}
                 "$mutt_bin" -s User-Validation -i ${scriptdir}\data\building_email.txt -a ${scriptdir}\out.png ${entered-email}
                 rm ${scriptdir}\out.png    
                 rm ${scriptdir}\data\building_email.txt
@@ -219,24 +234,24 @@ function create_email () {
 function create_captcha () {
     
     #check for existant verifyfile
-    if [ ! -f $scriptdir/data/pending/$usernumber ];then
-        VERIFYCODE=$($scriptdir/bbscaptcha.py)
-        echo "$VERIFYCODE" > $scriptdir/data/pending/$usernumber
+    if [ ! -f $scriptpath/data/pending/$usernumber ];then
+        VERIFYCODE=$($scriptpath/bbscaptcha.py)
+        echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
         if [ -d $webaudiopath ];then   # if you don't want to offer audio, do not define a webaudio path
-            cp $scriptdir/out.wav $webaudiopath/$usernumber.wav
+            cp $scriptpath/out.wav $webaudiopath/$usernumber.wav
             echo "If you need or would prefer audio verification,"
             echo "point a web browser to"
             echo "$webaudiourl/$usernumber.wav"
             echo "and listen to that file."
             echo "Press any key to see the CAPTCHA."
         fi
-        rm $scriptdir/out.wav
+        rm $scriptpath/out.wav
         if [ -z $throttle ];then
-            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptdir/out.png | sed 's/ /./g' 
+            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptpath/out.png | sed 's/ /./g' 
         else
-            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptdir/out.png | sed 's/ /./g' | $throttle_bin -k 14.4  
+            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptpath/out.png | sed 's/ /./g' | $throttle_bin -k 14.4  
         fi
-        rm $scriptdir/out.png
+        rm $scriptpath/out.png
         verify_code
     else 
         echo "Verification already pending"
@@ -246,14 +261,14 @@ function create_captcha () {
 
 function upgrade_user () {
     #pseudo-code at the moment
-    wwivutil users set --user_num=22 --sl=20 --dsl=20
-    wwivutil autoval --user_num=20 ALT-F1
+    #wwivutil asv --key=VALUE USERNUMBER
+    echo "Worked!" >> /home/wwiv/captcha-text.txt
 }
 
 function verify_code () {
     
-    if [ -f $scriptdir/data/pending/$usernumber ];then
-        VERIFYCODE=$(head -n 1 $scriptdir/data/pending/$usernumber)
+    if [ -f $scriptpath/data/pending/$usernumber ];then
+        VERIFYCODE=$(head -n 1 $scriptpath/data/pending/$usernumber)
         if [ -f "${scriptpath}/captcha-code-enter.ans" ];then
             SHOWANSI="${scriptpath}/captcha-code-enter.ans"
             show_ansi
@@ -278,6 +293,7 @@ function verify_code () {
                 SHOWANSI="${scriptpath}/captcha-success.ans"
                 show_ansi
             else
+                upgrade_user
                 if [ "$colors" = "True" ];then
                     echo "${BLUE}###############################################${RESTORE}"        
                     echo "${LGRAY}Congratulations,${RESTORE}"
@@ -292,8 +308,7 @@ function verify_code () {
                     echo "###############################################"
                 fi
             fi
-            upgrade_user
-            rm -f $scriptdir/data/pending/$usernumber
+            rm -f $scriptpath/data/pending/$usernumber
             exit
         else
             if [ -f "${scriptpath}/captcha-error.ans" ];then
@@ -310,7 +325,7 @@ function verify_code () {
                     echo "###############################################"
                 fi
             fi
-            rm -f $scriptdir/data/pending/$usernumber
+            rm -f $scriptpath/data/pending/$usernumber
             sleep 3
             exit 77
         fi
@@ -340,11 +355,11 @@ function main () {
     
     captcha_splashscreen
     
-    if [ -f $scriptdir/data/pending/$usernumber ];then
+    if [ -f $scriptpath/data/pending/$usernumber ];then
         # if there's already a code, go straight to verification
         verify_code
     else
-        if [ ! -z $from-email ];then
+        if [ ! -z $from_email ];then
             echo "Do you want [e]mail or [c]aptcha?"
             # will insert email verification here
             IFS= read -r result

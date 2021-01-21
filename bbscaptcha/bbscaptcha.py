@@ -6,8 +6,8 @@ import random # importing the random module
 from captcha.audio import AudioCaptcha
 from captcha.image import ImageCaptcha
 
-audio = AudioCaptcha(voicedir='/home/steven/documents/programming/wwiv_bbs/wwiv_helpers/captcha/data/')
-image = ImageCaptcha(fonts=['/home/steven/documents/programming/wwiv_bbs/wwiv_helpers/captcha/data/Inconsolata-Regular.ttf', '/home/steven/documents/programming/wwiv_bbs/wwiv_helpers/captcha/data/Inconsolata-Regular.ttf'])
+audio = AudioCaptcha(voicedir='/home/steven/wwiv/chains/bbscaptcha/data/')
+image = ImageCaptcha(fonts=['/home/steven/wwiv/chains/bbscaptcha/data/Inconsolata-Regular.ttf', '/home/steven/wwiv/chains/bbscaptcha/data/data/Inconsolata-Regular.ttf'])
 
 tnum = random.randint(1000,99999)
 
