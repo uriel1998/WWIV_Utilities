@@ -37,6 +37,7 @@ usernumber=""
 username=""
 doorfile=""
 userSL=""
+email_fromaddress="no-reply@faithcollapsing.com"
 scriptpath=$(readlink -f "${0}" | xargs dirname)
 source "$scriptpath/bbscaptcha.ini"
 if [ ! -f "$scriptpath/data/email_log.txt" ];then
@@ -44,7 +45,6 @@ if [ ! -f "$scriptpath/data/email_log.txt" ];then
 fi
 email_logfile="$scriptpath/data/email_log.txt"
 VERIFYCODE=""
-chafa_bin=$(which chafa)
 toilet_bin=$(which toilet)
 toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
 throttle_bin=$(which throttle)
@@ -126,14 +126,11 @@ function show_help() {
 
 function show_ansi() {
 
-    if [ -z $throttle ];then
+    if [ -z $throttle_bin ];then
         cat ${SHOWANSI}
     else
-        cat ${SHOWANSI}
-        #cat ${SHOWANSI} | throttle -k 14.4  
+        cat ${SHOWANSI} | ${throttle_bin} 14.4
     fi
- 
-    
 }
 
 ##############################################################################
@@ -186,44 +183,42 @@ function create_email () {
                 echo "###############################################"
             fi
         fi
-        echo "Please enter the email address to send the verification code to."
-        IFS= read -r raw-email
-        entered-email=$(echo "raw-email" | awk '{print tolower($0)}')  
+        IFS= read -r raw_email
+        entered_email=$(echo "$raw_email" | awk '{print tolower($0)}')  
         
-        # VERY basic validation of format
-        if [[ $entered-email =~ '(.+)@(.+)' ]] ; then     
-            UsedEmail=$(grep -c "^${entered-email}" "${email_logfile}")
-            if [ $UsedEmail -ge 1 ];then
-                # They have already tried sending email with this address.
-                echo "This email has already been used for a validation attempt."
-                echo "Please send feedback to the sysop."
-                exit 98
-            else
-                VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
-                echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-                rm $scriptpath/out.wav
-                
-                BBSName=$(sed -n '22p' ${doorfile})
-                Sysop=$(sed -n '23p' ${doorfile})
-                
-                echo "Hi! Someone entered this email address to verify on $BBSName ." > $scriptpath\data\building_email.txt
-                echo " " >> $scriptpath\data\building_email.txt
-                echo "If you did not request this validation, our apologies. You do not need to" >> $scriptpath\data\building_email.txt 
-                echo "do anything. " >> $scriptpath\data\building_email.txt
-                echo " " >> $scriptpath\data\building_email.txt
-                echo "If you *did* request validation, your code is at the bottom of this email." >> $scriptpath\data\building_email.txt 
-                echo "Log back into the BBS and enter the code into the verification area.  " >> $scriptpath\data\building_email.txt
-                echo "It expires one hour after it was issued, so don't delay!" >> $scriptpath\data\building_email.txt
-                echo " " >> $scriptpath\data\building_email.txt
-                echo "Your number is $VERIFYCODE" >> $scriptpath\data\building_email.txt
-                echo " " >> $scriptpath\data\building_email.txt
-                echo "Thanks, $Sysop, Sysop of $BBSName " >> $scriptpath\data\building_email.txt
-                
-                echo "${entered-email}" >> ${email_logfile}
-                "$mutt_bin" -s User-Validation -i ${scriptdir}\data\building_email.txt -a ${scriptdir}\out.png ${entered-email}
-                rm ${scriptdir}\out.png    
-                rm ${scriptdir}\data\building_email.txt
-            fi
+        #TO DO - email validation
+        UsedEmail=$(grep -c "^${entered_email}" "${email_logfile}")
+        if [ $UsedEmail -ge 1 ];then
+            # They have already tried sending email with this address.
+            echo "This email has already been used for a validation attempt."
+            echo "Please send feedback to the sysop to fix this."
+            exit 98
+        else
+            VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
+            echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
+            BBSName=$(sed -n '22p' ${doorfile})
+            Sysop=$(sed -n '23p' ${doorfile})
+            
+            echo "Hi! Someone entered this email address to verify the user" > $scriptpath/data/building_email.txt
+            echo "$username on $BBSName ." > $scriptpath/data/building_email.txt
+            echo " " >> $scriptpath/data/building_email.txt
+            echo "If you did not request this validation, our apologies." >> $scriptpath/data/building_email.txt 
+            echo "You do not need to do anything. " >> $scriptpath/data/building_email.txt
+            echo " " >> $scriptpath/data/building_email.txt
+            echo "If you *did* request validation, your code is below." >> $scriptpath/data/building_email.txt 
+            echo "Log back into the BBS and enter the code into the verification area.  " >> $scriptpath/data/building_email.txt
+            echo "It expires one hour after it was issued, so don't delay!" >> $scriptpath/data/building_email.txt
+            echo " " >> $scriptpath/data/building_email.txt
+            echo "Your number is $VERIFYCODE" >> $scriptpath/data/building_email.txt
+            echo " " >> $scriptpath/data/building_email.txt
+            echo "Thanks, $Sysop, Sysop of $BBSName " >> $scriptpath/data/building_email.txt
+            echo "${entered_email}" >> ${email_logfile}
+            
+            # So it can send from a different address but the env doesn't persist
+            ORG_EMAIL="${EMAIL}"
+            EMAIL="${email_fromaddress}" "$mutt_bin" -s "$BBSName User Validation" -i ${scriptdir}/data/building_email.txt ${entered_email}
+            EMAIL="${ORG_EMAIL}"
+            rm ${scriptdir}/data/building_email.txt
         fi
     fi
     echo "###############################################"  
@@ -372,8 +367,9 @@ function main () {
             echo "Do you want [e]mail or [c]aptcha?"
             # will insert email verification here
             IFS= read -r result
-            if [[ "$result" =~ "^e" ]];then
+            if [[ "$result" =~ "e" ]];then
                 create_email
+                read
             fi
         fi
         create_captcha
