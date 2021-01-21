@@ -29,10 +29,7 @@ This project is licensed under the MIT license. For the full license, see `LICEN
 
 ## 3. Prerequisites
 
-* chafa
-* python3
-* pip
-* https://github.com/lepture/captcha
+toilet toilet-fonts figlet
 
 Optional:
 
@@ -50,7 +47,6 @@ loaded by default if they exist).
 
 ## 4. Installation
 
-install chafa, python, pip, throttle, mutt
 
 exit codes 
 

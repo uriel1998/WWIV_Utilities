@@ -5,7 +5,8 @@
 # script/shadow/slant/small/smslant/standard/block/lean/big/smmono9/smmono12/smblock
 # pagga/emboss/future/smbraille  < - these are part of the standard fonts with 
 # sudo apt install figlet toilet toilet-fonts
-
+# boxes
+# columns/diamonds/scroll/twisted/xes/whirly
 # options for concat wav files for audio
 
 ## wwivutil asv --key=VALUE USERNUMBER
@@ -37,7 +38,6 @@ usernumber=""
 username=""
 doorfile=""
 userSL=""
-email_fromaddress="no-reply@faithcollapsing.com"
 scriptpath=$(readlink -f "${0}" | xargs dirname)
 source "$scriptpath/bbscaptcha.ini"
 if [ ! -f "$scriptpath/data/email_log.txt" ];then
@@ -46,6 +46,7 @@ fi
 email_logfile="$scriptpath/data/email_log.txt"
 VERIFYCODE=""
 toilet_bin=$(which toilet)
+box_styles="columns@diamonds@scroll@twisted@xes@whirly"
 toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
 throttle_bin=$(which throttle)
 mutt_bin=$(which mutt)
@@ -189,9 +190,15 @@ function create_email () {
         #TO DO - email validation
         UsedEmail=$(grep -c "^${entered_email}" "${email_logfile}")
         if [ $UsedEmail -ge 1 ];then
-            # They have already tried sending email with this address.
-            echo "This email has already been used for a validation attempt."
-            echo "Please send feedback to the sysop to fix this."
+            if [ "$colors" = "True" ];then
+                echo "${RED}###############################################${RESTORE}"        
+                echo -e "${YELLOW}\nThis email has already been used for a validation attempt.\nPlease send feedback to the sysop to fix this.\n${RESTORE}"
+                echo "${RED}###############################################${RESTORE}"        
+            else
+                echo "###############################################"
+                echo -e "\nThis email has already been used for a validation attempt.\nPlease send feedback to the sysop to fix this.\n"
+                echo "###############################################"
+            fi
             exit 98
         else
             VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
@@ -216,7 +223,7 @@ function create_email () {
             
             # So it can send from a different address but the env doesn't persist
             ORG_EMAIL="${EMAIL}"
-            EMAIL="${email_fromaddress}" "$mutt_bin" -s "$BBSName User Validation" -i ${scriptdir}/data/building_email.txt ${entered_email}
+            EMAIL="${from_email}" "$mutt_bin" -s "$BBSName User Validation" -i ${scriptdir}/data/building_email.txt ${entered_email}
             EMAIL="${ORG_EMAIL}"
             rm ${scriptdir}/data/building_email.txt
         fi
@@ -235,22 +242,13 @@ function create_captcha () {
     if [ ! -f $scriptpath/data/pending/$usernumber ];then
         VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
         echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-        ###DISABLED FOR THE MOMENT
-        if [ -d $webaudiopath ] && [ 2 == 1 ] ;then   # if you don't want to offer audio, do not define a webaudio path
-            #https://superuser.com/a/587553
-            #ffmpeg -i input1.wav -i input2.wav -i input3.wav -i input4.wav -i input5.wav -filter_complex '[0:0][1:0][2:0][3:0]concat=n=5:v=0:a=1[out]' -map '[out]' output.wav
-            cp $scriptpath/out.wav $webaudiopath/$usernumber.wav
-            echo "If you need or would prefer audio verification,"
-            echo "point a web browser to"
-            echo "$webaudiourl/$usernumber.wav"
-            echo "and listen to that file."
-            echo "Press any key to see the CAPTCHA."
-            rm $scriptpath/out.wav
-        fi
         bob=$(($RANDOM % 10))
         tfont=$(echo "$toilet_fonts" | awk -F '@' -v bob="$bob" '{ print $bob }')
+        bob2=$(($RANDOM % 6))
+        box_style=$(echo "$box_styles" | awk -F '@' -v bob="$bob2" '{ print $bob }')
+        toilet -f "${tfont}" ${VERIFYCODE} > $scriptpath/data/buildcaptcha.txt
+        boxes -d ${box_style} -i none -p a1 $scriptpath/data/buildcaptcha.txt
 
-        toilet -f "${tfont}" ${VERIFYCODE}
         # TODO - OFFER REGENERATING IT IF PROBLEMS HAPPEN
         verify_code
     else 
