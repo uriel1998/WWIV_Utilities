@@ -6,6 +6,8 @@
 # pagga/emboss/future/smbraille  < - these are part of the standard fonts with 
 # sudo apt install figlet toilet toilet-fonts
 
+# options for concat wav files for audio
+
 ## wwivutil asv --key=VALUE USERNUMBER
 ##############################################################################
 # BBS Captcha / Autovalidator Script for WWIV 5+
@@ -43,6 +45,8 @@ fi
 email_logfile="$scriptpath/data/email_log.txt"
 VERIFYCODE=""
 chafa_bin=$(which chafa)
+toilet_bin=$(which toilet)
+toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
 throttle_bin=$(which throttle)
 mutt_bin=$(which mutt)
 SHOWANSI=""
@@ -235,9 +239,12 @@ function create_captcha () {
     
     #check for existant verifyfile
     if [ ! -f $scriptpath/data/pending/$usernumber ];then
-        VERIFYCODE=$($scriptpath/bbscaptcha.py)
+        VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
         echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-        if [ -d $webaudiopath ];then   # if you don't want to offer audio, do not define a webaudio path
+        ###DISABLED FOR THE MOMENT
+        if [ -d $webaudiopath ] && [ 2 == 1 ] ;then   # if you don't want to offer audio, do not define a webaudio path
+            #https://superuser.com/a/587553
+            #ffmpeg -i input1.wav -i input2.wav -i input3.wav -i input4.wav -i input5.wav -filter_complex '[0:0][1:0][2:0][3:0]concat=n=5:v=0:a=1[out]' -map '[out]' output.wav
             cp $scriptpath/out.wav $webaudiopath/$usernumber.wav
             echo "If you need or would prefer audio verification,"
             echo "point a web browser to"
@@ -246,12 +253,11 @@ function create_captcha () {
             echo "Press any key to see the CAPTCHA."
         fi
         rm $scriptpath/out.wav
-        if [ -z $throttle ];then
-            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptpath/out.png | sed 's/ /./g' 
-        else
-            $chafa_bin --colors=none -s 70x20  --clear --fill -all-stipple-braille-ascii-space-extra-inverted --invert --symbols -all-stipple-braille+ascii+space-extra-inverted $scriptpath/out.png | sed 's/ /./g' | $throttle_bin -k 14.4  
-        fi
-        rm $scriptpath/out.png
+        bob=$(($RANDOM % 10))
+        tfont=$(echo "$toilet_fonts" | awk -F '@' -v bob="$bob" '{ print $bob }')
+
+        toilet -f "${tfont}" ${VERIFYCODE}
+        # TODO - OFFER REGENERATING IT IF PROBLEMS HAPPEN
         verify_code
     else 
         echo "Verification already pending"
