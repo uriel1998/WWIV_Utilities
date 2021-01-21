@@ -72,10 +72,10 @@ done
 # Verifying that setup is correct
 ##############################################################################
 
-echo "${doorfile}"
-sed -n '11p' ${doorfile}
-sed -n '1p' ${doorfile}
-sed -n '2p' ${doorfile}
+#echo "${doorfile}"
+#sed -n '11p' ${doorfile}
+#sed -n '1p' ${doorfile}
+#sed -n '2p' ${doorfile}
 
 # If CHAIN.TXT is not passed, then this program doesn't know what their SL is
 if [ ! -f ${doorfile} ];then
@@ -129,7 +129,8 @@ function show_ansi() {
     if [ -z $throttle ];then
         cat ${SHOWANSI}
     else
-        cat ${SHOWANSI} | throttle -k 14.4  
+        cat ${SHOWANSI}
+        #cat ${SHOWANSI} | throttle -k 14.4  
     fi
  
     
@@ -141,34 +142,30 @@ function show_ansi() {
 
 function captcha_splashscreen() {
 
-    if [ -z $splashscreen ];then
-        if [ -z $splashscreen ] || [ ! -f ${splashscreen} ];then
-            if [ "$colors" = "True" ];then
-                echo "${BLUE}###############################################${RESTORE}"        
-                echo "${LGRAY}Users used to auto-validate by having ${RESTORE}"
-                echo "${LGRAY}the BBS call back. Now, we use CAPTCHAs. ${RESTORE}"
-                echo -e "${LGRAY}\nYou will momentarily be presented with${RESTORE}"
-                echo "${LGRAY}an ANSI/ASCII CAPTCHA with several${RESTORE}"      
-                echo "${LGRAY}numbers on it.  You know the drill${RESTORE}"      
-                echo "${LGRAY}from there, right?${RESTORE}"                      
-                echo "${BLUE}###############################################${RESTORE}"
-            else
-                echo "###############################################"        
-                echo " Users used to auto-validate by having"     
-                echo "  the BBS call back. Now, we use CAPTCHAs."
-                echo -e "\n You will momentarily be presented with"  
-                echo "  an ANSI/ASCII CAPTCHA with several "       
-                echo "  numbers on it.  You know the drill"        
-                echo "  from there, right?"
-                echo "###############################################"
-            fi
+    if [ ! -f ${splashscreen} ] || [ -z ${splashscreen} ];then
+        if [ "$colors" = "True" ];then
+            echo "${BLUE}###############################################${RESTORE}"        
+            echo "${LGRAY}Users used to auto-validate by having ${RESTORE}"
+            echo "${LGRAY}the BBS call back. Now, we use CAPTCHAs. ${RESTORE}"
+            echo -e "${LGRAY}\nYou will momentarily be presented with${RESTORE}"
+            echo "${LGRAY}an ANSI/ASCII CAPTCHA with several${RESTORE}"      
+            echo "${LGRAY}numbers on it.  You know the drill${RESTORE}"      
+            echo "${LGRAY}from there, right?${RESTORE}"                      
+            echo "${BLUE}###############################################${RESTORE}"
         else
-            SHOWANSI=${splashscreen}
-            show_ansi
+            echo "###############################################"        
+            echo " Users used to auto-validate by having"     
+            echo "  the BBS call back. Now, we use CAPTCHAs."
+            echo -e "\n You will momentarily be presented with"  
+            echo "  an ANSI/ASCII CAPTCHA with several "       
+            echo "  numbers on it.  You know the drill"        
+            echo "  from there, right?"
+            echo "###############################################"
         fi
+    else
+        SHOWANSI=${splashscreen}
+        show_ansi
     fi
-
-    sleep 3
 }
 
 
@@ -198,9 +195,11 @@ function create_email () {
             UsedEmail=$(grep -c "^${entered-email}" "${email_logfile}")
             if [ $UsedEmail -ge 1 ];then
                 # They have already tried sending email with this address.
+                echo "This email has already been used for a validation attempt."
+                echo "Please send feedback to the sysop."
                 exit 98
             else
-                VERIFYCODE=$($scriptpath/bbscaptcha.py)
+                VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
                 echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
                 rm $scriptpath/out.wav
                 
@@ -251,8 +250,8 @@ function create_captcha () {
             echo "$webaudiourl/$usernumber.wav"
             echo "and listen to that file."
             echo "Press any key to see the CAPTCHA."
+            rm $scriptpath/out.wav
         fi
-        rm $scriptpath/out.wav
         bob=$(($RANDOM % 10))
         tfont=$(echo "$toilet_fonts" | awk -F '@' -v bob="$bob" '{ print $bob }')
 
@@ -283,18 +282,20 @@ function verify_code () {
                 echo "${BLUE}###############################################${RESTORE}"        
                 echo "${LGRAY}A verification code has been found for${RESTORE}"
                 echo -e "${YELLOW}\n${username}\n${RESTORE}"
-                echo "${LGRAY}Please enter your verification code below.${RESTORE}"
+                echo "${LGRAY}Please enter your verification code below${RESTORE}"
+                echo "${LGRAY}Codes are reset after one hour.${RESTORE}"
                 echo "${BLUE}###############################################${RESTORE}"
             else
                 echo "###############################################"        
                 echo "A verification code has been found for"
                 echo -e "\n${username}\n"
                 echo "Please enter your verification code below."
+                echo "Codes are reset after one hour."                
                 echo "###############################################"
             fi
         fi
         IFS= read -r entered_code        
-        if [ $entered_code = $VERIFYCODE]; then
+        if [[ $entered_code = $VERIFYCODE ]]; then
             if [ -f "${scriptpath}/captcha-success.ans" ];then
                 SHOWANSI="${scriptpath}/captcha-success.ans"
                 show_ansi
@@ -331,7 +332,9 @@ function verify_code () {
                     echo "###############################################"
                 fi
             fi
-            rm -f $scriptpath/data/pending/$usernumber
+            # We want the captcha to persist until cleaned up by the script
+            #rm -f $scriptpath/data/pending/$usernumber
+            # yes, it dumps them out.
             sleep 3
             exit 77
         fi
