@@ -82,9 +82,7 @@ if [ -z $usernumber ];then
     echo "No usernumber! Exiting!"
     exit 99
 fi
-echo "$userSL" 
-echo "$valuserSL"
-read
+
 # either it's not read, or their SL is too high to auto-validate
 if [ -z $userSL ];then 
     if [ -f "${scriptpath}/SL-error.ans" ];then
@@ -117,7 +115,7 @@ fi
 # Cleanup of pending verifications > 59 minutes old
 ##############################################################################
 
-find $scriptpath/data/pending -maxdepth 1 -mmin +59 -type f -exec rm -f {} \;
+find $scriptpath/data/pending -maxdepth 1 -mmin +10 -type f -exec rm -f {} \;
 
 ##############################################################################
 # Show help
@@ -149,20 +147,18 @@ function captcha_splashscreen() {
             echo "${BLUE}###############################################${RESTORE}"        
             echo "${LGRAY}Users used to auto-validate by having ${RESTORE}"
             echo "${LGRAY}the BBS call back. Now, we use CAPTCHAs. ${RESTORE}"
-            echo -e "${LGRAY}\nYou will momentarily be presented with${RESTORE}"
-            echo "${LGRAY}an ANSI/ASCII CAPTCHA with several${RESTORE}"      
-            echo "${LGRAY}numbers on it.  You know the drill${RESTORE}"      
-            echo "${LGRAY}from there, right?${RESTORE}"                      
+            echo "${LGRAY} You may choose an ASCII art CAPTCHA "  
+            echo "${LGRAY} or a SOLVA where you must choose the "       
+            echo "${LGRAY} correct code. If you are using a screen "        
+            echo "${LGRAY} reader, choose the SOLVA."
             echo "${BLUE}###############################################${RESTORE}"
         else
-            echo "###############################################"        
             echo " Users used to auto-validate by having"     
-            echo "  the BBS call back. Now, we use CAPTCHAs."
-            echo -e "\n You will momentarily be presented with"  
-            echo "  an ANSI/ASCII CAPTCHA with several "       
-            echo "  numbers on it.  You know the drill"        
-            echo "  from there, right?"
-            echo "###############################################"
+            echo " the BBS call back. Now, we use CAPTCHAs."
+            echo " You may choose an ASCII art CAPTCHA "  
+            echo " or a SOLVA where you must choose the "       
+            echo " correct code. If you are using a screen "        
+            echo " reader, choose the SOLVA."
         fi
     else
         SHOWANSI=${splashscreen}
@@ -177,19 +173,25 @@ function create_solva () {
 
         VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
         echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-        bob=$(($RANDOM % 5))
-        
+        bob=$((1+$RANDOM % 5))
+        echo "$bob"
         right_code="first@second@third@fourth@fifth"
-        code_position=$(echo "$right_code" | awk -F '@' -v bob="$bob2" '{ print $bob }')
-        
-        for ((count = 0; count < 6; count++));do
+        code_position=$(echo "$right_code" | awk -F '@' -v bob="$bob" '{ print $bob }')
+        if [ "$colors" = "True" ];then
+            echo "${BLUE}###############################################${RESTORE}"        
+        fi
+
+        for ((count = 1; count < 6; count++));do
             if [ $count = $bob ];then
-                printf "%s" "$VERIFYCODE"
+                printf "%s\n" "$VERIFYCODE"
             else
-                printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))"
+                printf "%s%s%s%s%s\n" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))"
             fi
         done
-        printf "Type in the %s code please.\n" "code_position"
+        printf "\n\nTo verify, on the next screen type in the %s code please.\n" "$code_position"
+        if [ "$colors" = "True" ];then
+            echo "${BLUE}###############################################${RESTORE}"        
+        fi
         verify_code
     else 
         echo "Verification already pending"
@@ -205,9 +207,9 @@ function create_captcha () {
     if [ ! -f $scriptpath/data/pending/$usernumber ];then
         VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
         echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-        bob=$(($RANDOM % 10))
+        bob=$((1 + $RANDOM % 10))
         tfont=$(echo "$toilet_fonts" | awk -F '@' -v bob="$bob" '{ print $bob }')
-        bob2=$(($RANDOM % 6))
+        bob2=$((1 + $RANDOM % 6))
         box_style=$(echo "$box_styles" | awk -F '@' -v bob="$bob2" '{ print $bob }')
         toilet -f "${tfont}" ${VERIFYCODE} > $scriptpath/data/buildcaptcha.txt
         boxes -d ${box_style} -i none -p a1 $scriptpath/data/buildcaptcha.txt
@@ -223,7 +225,7 @@ function create_captcha () {
 function upgrade_user () {
     #pseudo-code at the moment
     #wwivutil asv --key=VALUE USERNUMBER
-    echo "Worked!" >> /home/wwiv/captcha-text.txt
+    echo "Worked!" 
 }
 
 function verify_code () {
@@ -239,15 +241,13 @@ function verify_code () {
                 echo "${LGRAY}A verification code has been found for${RESTORE}"
                 echo -e "${YELLOW}\n${username}\n${RESTORE}"
                 echo "${LGRAY}Please enter your verification code below${RESTORE}"
-                echo "${LGRAY}Codes are reset after one hour.${RESTORE}"
+                echo "${LGRAY}Codes are reset after ten minutes.${RESTORE}"
                 echo "${BLUE}###############################################${RESTORE}"
             else
-                echo "###############################################"        
                 echo "A verification code has been found for"
                 echo -e "\n${username}\n"
                 echo "Please enter your verification code below."
-                echo "Codes are reset after one hour."                
-                echo "###############################################"
+                echo "Codes are reset after ten minutes."                
             fi
         fi
         IFS= read -r entered_code        
@@ -265,11 +265,9 @@ function verify_code () {
                     echo "${LGRAY}You are now verified!${RESTORE}"
                     echo "${BLUE}###############################################${RESTORE}"
                 else
-                    echo "###############################################"        
                     echo "Congratulations,"
                     echo -e "\n${username}\n"
                     echo "You are now verified!"
-                    echo "###############################################"
                 fi
             fi
             rm -f $scriptpath/data/pending/$usernumber
@@ -284,9 +282,7 @@ function verify_code () {
                     echo -e "${YELLOW}\nINCORRECT CODE\n${RESTORE}"
                     echo "${RED}###############################################${RESTORE}"        
                 else
-                    echo "###############################################"
                     echo -e "\n$INCORRECT CODE\n"
-                    echo "###############################################"
                 fi
             fi
             # We want the captcha to persist until cleaned up by the script
@@ -306,10 +302,8 @@ function verify_code () {
                 echo -e "${YELLOW}\n${usernumber} ${username}\n${RESTORE}"
                 echo "${RED}###############################################${RESTORE}"        
             else
-                echo "###############################################"
                 echo "No verification code found for"
                 echo -e "\n${usernumber} ${username}\n"
-                echo "###############################################"
             fi
         fi
         sleep 3
@@ -325,18 +319,14 @@ function main () {
         # if there's already a code, go straight to verification
         verify_code
     else
-        if [ ! -z $from_email ];then
-            echo "Do you want [s]olva or [c]aptcha?"
-            # will insert email verification here
-            IFS= read -r result
-            if [[ "$result" =~ "s" ]];then
-                create_solva
-                read
-            fi
+        echo "Do you want [s]olva or [c]aptcha?"
+        IFS= read -r result
+        if [[ "$result" =~ "s" ]];then
+            create_solva
+        else
+            create_captcha
         fi
-        create_captcha
     fi
-
 }
 
 main
