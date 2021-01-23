@@ -31,10 +31,21 @@ This project is licensed under the MIT license. For the full license, see `LICEN
 
 Most of the program requirements are installed by default on linux systems, but
 for DoorParty you will possibly need `rsh-redone-client`; install it on Debian/Ubuntu
-with `sudo apt install rsh-redone-client`.
+with `sudo apt install rsh-redone-client`.  You can also try `sudo apt install rsh-client` .
+
+There are several different versions of `rlogin`, including some that are just 
+redirects to SSH.  If you're having trouble, try editing the line 
+```
+commandstring=$(printf "TERM=${directdoor} rlogin -E -K -8 -l \[%s\]\"%s\" -p 9999 localhost" "${systemtag}" "${username}") 
+```
+to 
+```
+commandstring=$(printf "TERM=${directdoor} rlogin -l \[%s\]\"%s\" -p 9999 localhost" "${systemtag}" "${username}") 
+```
+.  
 
 Please note that [RLOGIN is a security risk](https://www.ssh.com/ssh/rlogin) if 
-exposed to the internet (though the "redone-client" aims to fix that.  Ensure 
+exposed to the internet (though the "redone-client" claims to fix that).  Ensure 
 that you have both your router and system firewalls so that they will not 
 accept connections from outside the LAN, and you should be 
 fine. It is for this reason that it is best practice to have the `doorparty-connector` 
