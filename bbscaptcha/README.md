@@ -34,13 +34,6 @@ toilet toilet-fonts figlet boxes
 
 Optional:
 
-* [throttle](https://linux.die.net/man/1/throttle)
-
-If you wish to use `throttle` to emulate connection speeds, just ensure that 
-it is present in your `$PATH`. If it is not present, it will simply be skipped. 
-
-Note that WWIV 5.* can do this automatically, and there is no need for `throttle`.
-
 
 * ANSI art loading screen for each script
 

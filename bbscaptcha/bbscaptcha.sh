@@ -40,7 +40,6 @@ VERIFYCODE=""
 toilet_bin=$(which toilet)
 box_styles="columns@diamonds@scroll@twisted@xes@whirly"
 toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
-throttle_bin=$(which throttle)
 SHOWANSI=""
 
 ##############################################################################
@@ -75,7 +74,7 @@ else
     userANSI=$(sed -n '14p' ${doorfile})
 fi
 
-if [ "$userANSI" == 1 ];then
+if [ "$userANSI" == "1" ];then
     if [ -f "$scriptpath/bashcolors" ];then
         source "$scriptpath/bashcolors"
         colors="True"
@@ -128,14 +127,9 @@ function show_help() {
 }
 
 function show_ansi() {
-
-if [ "$colors" == "true" ];then
-    if [ -z $throttle_bin ];then
+    if [ "$colors" = "True" ];then
         cat ${SHOWANSI}
-    else
-        cat ${SHOWANSI} | ${throttle_bin} 14.4
     fi
-fi
 }
 
 ##############################################################################
@@ -143,29 +137,29 @@ fi
 ##############################################################################
 
 function captcha_splashscreen() {
-
-        if [ "$colors" = "True" ];then
-            if [ -f ${splashscreen} ];then 
-                SHOWANSI=${splashscreen}
-                show_ansi
-            else
-                echo "${BLUE}###############################################${RESTORE}"        
-                echo "${LGRAY} Users used to auto-validate by having ${RESTORE}"
-                echo "${LGRAY} the BBS call back. Now, we use CAPTCHAs. ${RESTORE}"
-                echo "${LGRAY} You may choose an ASCII art CAPTCHA "  
-                echo "${LGRAY} or a SOLVA where you must choose the "       
-                echo "${LGRAY} correct code. If you are using a screen "        
-                echo "${LGRAY} reader, choose the SOLVA."
-                echo "${BLUE}###############################################${RESTORE}"
-            fi
+    if [ "$colors" = "True" ];then
+        if [ -f ${splashscreen} ];then 
+            SHOWANSI=${splashscreen}
+            show_ansi
         else
-            echo " Users used to auto-validate by having"     
-            echo " the BBS call back. Now, we use CAPTCHAs."
-            echo " You may choose an ASCII art CAPTCHA "  
-            echo " or a SOLVA where you must choose the "       
-            echo " correct code. If you are using a screen "        
-            echo " reader, choose the SOLVA."
+            echo "${BLUE}###############################################${RESTORE}"        
+            echo "${LGRAY} Users used to auto-validate by having ${RESTORE}"
+            echo "${LGRAY} the BBS call back. Now, we use CAPTCHAs. ${RESTORE}"
+            echo "${LGRAY} You may choose an ASCII art CAPTCHA "  
+            echo "${LGRAY} or a SOLVA where you must choose the "       
+            echo "${LGRAY} correct code. If you are using a screen "        
+            echo "${LGRAY} reader, choose the SOLVA."
+            echo "${BLUE}###############################################${RESTORE}"
         fi
+    else
+        echo "5"
+        echo " Users used to auto-validate by having"     
+        echo " the BBS call back. Now, we use CAPTCHAs."
+        echo " You may choose an ASCII art CAPTCHA "  
+        echo " or a SOLVA where you must choose the "       
+        echo " correct code. If you are using a screen "        
+        echo " reader, choose the SOLVA."
+    fi
 }
 
 function create_solva () {
@@ -310,8 +304,7 @@ function verify_code () {
 
 function main () {
     
-    captcha_splashscreen
-    
+    captcha_splashscreen  
     if [ -f $scriptpath/data/pending/$usernumber ];then
         # if there's already a code, go straight to verification
         verify_code
