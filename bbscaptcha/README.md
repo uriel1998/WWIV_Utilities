@@ -34,19 +34,31 @@ toilet toilet-fonts figlet boxes
 
 Optional:
 
-* mutt for email verification
-
 * [throttle](https://linux.die.net/man/1/throttle)
 
 If you wish to use `throttle` to emulate connection speeds, just ensure that 
-it is present in your `$PATH`. If it is not present, it will simply be skipped.
+it is present in your `$PATH`. If it is not present, it will simply be skipped. 
+
+Note that WWIV 5.* can do this automatically, and there is no need for `throttle`.
+
 
 * ANSI art loading screen for each script
 
 If you do not wish to use the ANSI art files, delete or rename them. (They are 
-loaded by default if they exist).
+loaded by default if they exist).  They will NOT be loaded if the user has ANSI 
+off (e.g. for screen readers).
+
+captcha-error.ans
+captcha-success.ans
+captcha-code-enter.ans
+captcha-welcome.ans
 
 ## 4. Installation
+
+bbscaptcha.ini
+
+newuserSL=10
+valuserSL=20
 
 
 exit codes 
@@ -59,15 +71,8 @@ exit codes
 
 newuserSL=10
 valuserSL=20
-webaudiopath=/var/www/bbs/validate  <--- should be under main dir
-webaudiourl=https://bbs.faithcollapsing.com/validate  <---- URL to report (notice rewrite)
-from-email=email-address-verification@faithcollapsing.com <-------- your sysop email (or noreply, I guess?)
 
-if webaudiopath= then no audio will be produced
-if from-email= then no option for email will be used
-
-example website mockup using https://strapdownjs.com/ strapdown library with 
-nginx rewrite block and apache htaccess rewrite block
 
 ## 5. TODO
 
+Redisplay captcha 
