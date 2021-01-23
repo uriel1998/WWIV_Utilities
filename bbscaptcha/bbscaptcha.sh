@@ -24,12 +24,8 @@
 
 
 #ONE PERSON IN DOOR AT A TIME, SET MAX TIME IN DOOR TO 5m or less
-
-#https://github.com/lepture/captcha
-
-#TODO - check htaccess
-#TODO - check nginx
-
+#TODO - error when code exists when picking font or somesuch
+#TODO - re - presentation of captcha
 
 ##############################################################################
 # Init Variables
@@ -73,11 +69,6 @@ done
 # Verifying that setup is correct
 ##############################################################################
 
-#echo "${doorfile}"
-#sed -n '11p' ${doorfile}
-#sed -n '1p' ${doorfile}
-#sed -n '2p' ${doorfile}
-
 # If CHAIN.TXT is not passed, then this program doesn't know what their SL is
 if [ ! -f ${doorfile} ];then
     userSL=""
@@ -91,13 +82,26 @@ if [ -z $usernumber ];then
     echo "No usernumber! Exiting!"
     exit 99
 fi
-
+echo "$userSL" 
+echo "$valuserSL"
+read
 # either it's not read, or their SL is too high to auto-validate
-if [ -z $userSL ] || [ $userSL -ge $valuserSL ];then    
+if [ -z $userSL ];then 
     if [ -f "${scriptpath}/SL-error.ans" ];then
         splashscreen="${scriptpath}/SL-error.ans"
-        exit 99
+    else
+        echo "Error - User SL not available"
     fi
+    exit 99
+fi
+
+if [ $userSL -ge $valuserSL ];then    
+    if [ -f "${scriptpath}/SL-error.ans" ];then
+        splashscreen="${scriptpath}/SL-error.ans"
+    else
+        echo "Error - User SL is greater than validation SL"
+    fi
+    exit 99
 fi
 
 if [ -f "$scriptpath/bashcolors" ];then
@@ -166,73 +170,32 @@ function captcha_splashscreen() {
     fi
 }
 
+function create_solva () {
 
-function create_email () {
-    
+    #check for existant verifyfile
     if [ ! -f $scriptpath/data/pending/$usernumber ];then
-        if [ -f "${scriptpath}/captcha-email.ans" ];then
-            SHOWANSI="${scriptpath}/captcha-email.ans"
-            show_ansi
-        else
-            if [ "$colors" = "True" ];then
-                echo "${BLUE}###############################################${RESTORE}"        
-                echo "${LGRAY}Please enter the email address to verify.${RESTORE}"
-                echo "${BLUE}###############################################${RESTORE}"
-            else
-                echo "###############################################"
-                echo "Please enter the email address to verify."
-                echo "###############################################"
-            fi
-        fi
-        IFS= read -r raw_email
-        entered_email=$(echo "$raw_email" | awk '{print tolower($0)}')  
+
+        VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
+        echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
+        bob=$(($RANDOM % 5))
         
-        #TO DO - email validation
-        UsedEmail=$(grep -c "^${entered_email}" "${email_logfile}")
-        if [ $UsedEmail -ge 1 ];then
-            if [ "$colors" = "True" ];then
-                echo "${RED}###############################################${RESTORE}"        
-                echo -e "${YELLOW}\nThis email has already been used for a validation attempt.\nPlease send feedback to the sysop to fix this.\n${RESTORE}"
-                echo "${RED}###############################################${RESTORE}"        
+        right_code="first@second@third@fourth@fifth"
+        code_position=$(echo "$right_code" | awk -F '@' -v bob="$bob2" '{ print $bob }')
+        
+        for ((count = 0; count < 6; count++));do
+            if [ $count = $bob ];then
+                printf "%s" "$VERIFYCODE"
             else
-                echo "###############################################"
-                echo -e "\nThis email has already been used for a validation attempt.\nPlease send feedback to the sysop to fix this.\n"
-                echo "###############################################"
+                printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))"
             fi
-            exit 98
-        else
-            VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
-            echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-            BBSName=$(sed -n '22p' ${doorfile})
-            Sysop=$(sed -n '23p' ${doorfile})
-            
-            echo "Hi! Someone entered this email address to verify the user" > $scriptpath/data/building_email.txt
-            echo "$username on $BBSName ." > $scriptpath/data/building_email.txt
-            echo " " >> $scriptpath/data/building_email.txt
-            echo "If you did not request this validation, our apologies." >> $scriptpath/data/building_email.txt 
-            echo "You do not need to do anything. " >> $scriptpath/data/building_email.txt
-            echo " " >> $scriptpath/data/building_email.txt
-            echo "If you *did* request validation, your code is below." >> $scriptpath/data/building_email.txt 
-            echo "Log back into the BBS and enter the code into the verification area.  " >> $scriptpath/data/building_email.txt
-            echo "It expires one hour after it was issued, so don't delay!" >> $scriptpath/data/building_email.txt
-            echo " " >> $scriptpath/data/building_email.txt
-            echo "Your number is $VERIFYCODE" >> $scriptpath/data/building_email.txt
-            echo " " >> $scriptpath/data/building_email.txt
-            echo "Thanks, $Sysop, Sysop of $BBSName " >> $scriptpath/data/building_email.txt
-            echo "${entered_email}" >> ${email_logfile}
-            
-            # So it can send from a different address but the env doesn't persist
-            ORG_EMAIL="${EMAIL}"
-            EMAIL="${from_email}" "$mutt_bin" -s "$BBSName User Validation" -i ${scriptdir}/data/building_email.txt ${entered_email}
-            EMAIL="${ORG_EMAIL}"
-            rm ${scriptdir}/data/building_email.txt
-        fi
+        done
+        printf "Type in the %s code please.\n" "code_position"
+        verify_code
+    else 
+        echo "Verification already pending"
+        exit 98
     fi
-    echo "###############################################"  
-    echo " Email sent! Re-enter this program to enter the"
-    echo " validation code!"
-    echo "###############################################"  
-    exit 0
+    
 }
 
 
@@ -288,6 +251,7 @@ function verify_code () {
             fi
         fi
         IFS= read -r entered_code        
+
         if [[ $entered_code = $VERIFYCODE ]]; then
             if [ -f "${scriptpath}/captcha-success.ans" ];then
                 SHOWANSI="${scriptpath}/captcha-success.ans"
@@ -362,11 +326,11 @@ function main () {
         verify_code
     else
         if [ ! -z $from_email ];then
-            echo "Do you want [e]mail or [c]aptcha?"
+            echo "Do you want [s]olva or [c]aptcha?"
             # will insert email verification here
             IFS= read -r result
-            if [[ "$result" =~ "e" ]];then
-                create_email
+            if [[ "$result" =~ "s" ]];then
+                create_solva
                 read
             fi
         fi

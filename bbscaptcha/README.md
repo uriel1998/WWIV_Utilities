@@ -11,6 +11,7 @@ in the WWIV source code.  THIS IS ROUGH AND UNTESTED CODE.
 **NO GUARANTEES AT ALL**
 
 
+
 ## Contents
  1. [About](#1-about)
  2. [License](#2-license)
@@ -29,7 +30,7 @@ This project is licensed under the MIT license. For the full license, see `LICEN
 
 ## 3. Prerequisites
 
-toilet toilet-fonts figlet
+toilet toilet-fonts figlet boxes
 
 Optional:
 
