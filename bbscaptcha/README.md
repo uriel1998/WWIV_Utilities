@@ -48,6 +48,18 @@ captcha-welcome.ans
 
 ## 4. Installation
 
+setup asv in wwivconfig
+
+asv --user=<num> --asv=1 : Autoval user.
+./wwivutil users asv --user=8 --asv=1 
+
+```
+bash -c "./chains/bbscaptcha/bbscaptcha.sh -f %1"
+```
+
+STDIO
+Not multiuser
+
 bbscaptcha.ini
 
 newuserSL=10
