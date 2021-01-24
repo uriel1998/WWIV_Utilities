@@ -28,6 +28,7 @@ toilet_bin=$(which toilet)
 box_styles="columns@diamonds@scroll@twisted@xes@whirly"
 toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
 SHOWANSI=""
+HOME=$scriptpath
 
 ##############################################################################
 # Get command-line parameters
@@ -49,6 +50,10 @@ done
 ##############################################################################
 # Verifying that setup is correct
 ##############################################################################
+
+if [ ! -d "$scriptpath/data/pending" ];then
+    mkdir -p "$scriptpath/data/pending"
+fi
 
 # If CHAIN.TXT is not passed, then this program doesn't know what their SL is
 if [ ! -f ${doorfile} ];then
@@ -207,6 +212,7 @@ function create_captcha () {
 function upgrade_user () {
     #pseudo-code at the moment
     #wwivutil asv --key=VALUE USERNUMBER
+    #./wwivutil users asv --user="${usernumber}" --asv="${ASVlevel}"
     echo "Worked!" 
 }
 
