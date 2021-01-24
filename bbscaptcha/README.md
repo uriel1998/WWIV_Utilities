@@ -1,16 +1,8 @@
 # BBS Autovalidator
 
-This is designed for WWIV, but can be adapted for other BBSes **IF** there 
-is a way for you to externally modify the security values of the user.  
+Example of use, showing CAPTCHA, SOLVA, and what happens if you get it wrong.
 
-That portion is currently being worked on via either modification or incorporation 
-in the WWIV source code.  THIS IS ROUGH AND UNTESTED CODE.  
-
-**UNTESTED CODE**  
-
-**NO GUARANTEES AT ALL**
-
-
+![Example of use](https://raw.githubusercontent.com/uriel1998/WWIV_Utilities/master/bbscaptcha/bbscaptcha.gif "Example")
 
 ## Contents
  1. [About](#1-about)
@@ -47,6 +39,11 @@ having to nerf security levels to the point of irrelevance.
 
 All codes are reset after ten minutes, so if a user somehow forgets the code, 
 they can wait for that short time and restart the process.
+
+This is designed for WWIV, but can be adapted for other BBSes **IF** there 
+is a way for you to externally modify the security values of the user.  You will 
+need to either generate CHAIN.TXT or modify the code so that another dropfile is 
+usable.
 
 ## 2. License
 
