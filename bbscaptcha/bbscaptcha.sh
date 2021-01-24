@@ -1,13 +1,6 @@
 #!/bin/bash
 
-#TODO - testing is clearly fubared
-#TODO - USE TOILET/FIGLET INSTEAD OF PYTHON
-# script/shadow/slant/small/smslant/standard/block/lean/big/smmono9/smmono12/smblock
-# pagga/emboss/future/smbraille  < - these are part of the standard fonts with 
-# sudo apt install figlet toilet toilet-fonts
-# boxes
-# columns/diamonds/scroll/twisted/xes/whirly
-# options for concat wav files for audio
+#TODO: make file to check use the username as well so it's a little harder to guess?
 
 ## wwivutil asv --key=VALUE USERNUMBER
 ##############################################################################
@@ -17,15 +10,9 @@
 #
 # Under the MIT license
 #
-# Uses Chain.txt or usernumber passed as a variable
-# If chain.txt isn't being passed properly,then use door.sys line 36
+# Uses Chain.txt passed as a variable ( -f /path/to/file )
 #
 ##############################################################################
-
-
-#ONE PERSON IN DOOR AT A TIME, SET MAX TIME IN DOOR TO 5m or less
-#TODO - error when code exists when picking font or somesuch
-#TODO - re - presentation of captcha
 
 ##############################################################################
 # Init Variables
@@ -63,10 +50,11 @@ done
 # Verifying that setup is correct
 ##############################################################################
 
-
 # If CHAIN.TXT is not passed, then this program doesn't know what their SL is
 if [ ! -f ${doorfile} ];then
     userSL=""
+    echo "Not properly configured! Notify SYSOP."
+    exit 99
 else
     userSL=$(sed -n '11p' ${doorfile})
     usernumber=$(sed -n '1p' ${doorfile})
@@ -102,7 +90,7 @@ if [ $userSL -ge $valuserSL ];then
     else
         echo "Error - User SL is greater than validation SL"
     fi
-    exit 99
+    #exit 99
 fi
 
 
@@ -111,7 +99,7 @@ if [ -f "${scriptpath}/captcha-welcome.ans" ];then
 fi
 
 ##############################################################################
-# Cleanup of pending verifications > 59 minutes old
+# Cleanup of pending verifications > 10 minutes old
 ##############################################################################
 
 find $scriptpath/data/pending -maxdepth 1 -mmin +10 -type f -exec rm -f {} \;
@@ -124,11 +112,14 @@ function show_help() {
     echo "Usage: bbscaptcha.sh [-f $var] "
     echo "  -h = show this help"
     echo "  -f = The path to CHAIN.TXT"
+    exit 99
 }
 
 function show_ansi() {
     if [ "$colors" = "True" ];then
         cat ${SHOWANSI}
+        echo ""
+        sleep 3
     fi
 }
 
