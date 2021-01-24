@@ -26,7 +26,7 @@ source "$scriptpath/bbscaptcha.ini"
 VERIFYCODE=""
 toilet_bin=$(which toilet)
 box_styles="columns@diamonds@scroll@twisted@xes@whirly"
-toilet_fonts="script@shadow@slant@small@smslant@standard@block@lean@big@smmono9@smmono12@smblock@pagga@emboss@future@smbraille"
+toilet_fonts="block@big@lean@mini@script@slant@small@smslant"
 SHOWANSI=""
 HOME=$scriptpath
 
@@ -194,7 +194,7 @@ function create_captcha () {
     if [ ! -f $scriptpath/data/pending/$usernumber ];then
         VERIFYCODE=$(printf "%s%s%s%s%s" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))" "$(($RANDOM % 10))")
         echo "$VERIFYCODE" > $scriptpath/data/pending/$usernumber
-        bob=$((1 + $RANDOM % 10))
+        bob=$((1 + $RANDOM % 8))
         tfont=$(echo "$toilet_fonts" | awk -F '@' -v bob="$bob" '{ print $bob }')
         bob2=$((1 + $RANDOM % 6))
         box_style=$(echo "$box_styles" | awk -F '@' -v bob="$bob2" '{ print $bob }')
