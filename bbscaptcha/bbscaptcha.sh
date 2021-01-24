@@ -28,7 +28,6 @@ toilet_bin=$(which toilet)
 box_styles="columns@diamonds@scroll@twisted@xes@whirly"
 toilet_fonts="block@big@lean@mini@script@slant@small@smslant"
 SHOWANSI=""
-HOME=$scriptpath
 
 ##############################################################################
 # Get command-line parameters
@@ -93,9 +92,10 @@ if [ $userSL -ge $valuserSL ];then
     if [ -f "${scriptpath}/SL-error.ans" ];then
         splashscreen="${scriptpath}/SL-error.ans"
     else
-        echo "Error - User SL is greater than validation SL"
+        echo "Error - User SL is greater than validation SL!"
+        echo "You don't need this!"
     fi
-    #exit 99
+    exit 99
 fi
 
 
@@ -124,7 +124,7 @@ function show_ansi() {
     if [ "$colors" = "True" ];then
         cat ${SHOWANSI}
         echo ""
-        sleep 3
+        sleep 2
     fi
 }
 
@@ -199,7 +199,7 @@ function create_captcha () {
         bob2=$((1 + $RANDOM % 6))
         box_style=$(echo "$box_styles" | awk -F '@' -v bob="$bob2" '{ print $bob }')
         toilet -f "${tfont}" ${VERIFYCODE} > $scriptpath/data/buildcaptcha.txt
-        boxes -d ${box_style} -i none -p a1 $scriptpath/data/buildcaptcha.txt
+        HOME=$scriptpath boxes -d ${box_style} -i none -p a1 $scriptpath/data/buildcaptcha.txt
 
         # TODO - OFFER REGENERATING IT IF PROBLEMS HAPPEN
         verify_code
@@ -210,7 +210,8 @@ function create_captcha () {
 }
 
 function upgrade_user () {
-    ${WWIVutil_bin} users asv --user="${usernumber}" --asv="${ASVlevel}"
+    command_to_run=$(printf "%s users asv --user=%s --asv=%s" "${WWIVutil_bin}" "$usernumber" "${ASVlevel}")
+    eval "${command_to_run}"
 }
 
 function verify_code () {
