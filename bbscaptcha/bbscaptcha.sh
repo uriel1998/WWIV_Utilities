@@ -210,10 +210,7 @@ function create_captcha () {
 }
 
 function upgrade_user () {
-    #pseudo-code at the moment
-    #wwivutil asv --key=VALUE USERNUMBER
-    #./wwivutil users asv --user="${usernumber}" --asv="${ASVlevel}"
-    echo "Worked!" 
+    ${WWIVutil_bin} users asv --user="${usernumber}" --asv="${ASVlevel}"
 }
 
 function verify_code () {

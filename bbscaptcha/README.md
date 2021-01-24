@@ -95,10 +95,13 @@ WWIV user *must* be able to write to this directory.
 newuserSL=10
 valuserSL=20
 ASVlevel=1
+WWIVutil_bin=/home/wwiv/wwiv/wwivutil
 ```
 
-The first two ensure that the user is appropriate for autovalidation; the last 
+The first two ensure that the user is appropriate for autovalidation; the third 
 line defines the auto-validation level to apply upon successful validation. 
+The fourth line should reflect the full pathname for `WWIVutil`.
+
 The assumption in these instructions are that new users have a SL of 10 and 
 validated users have an SL of 20, and that you wish to use the first Auto Validation 
 level for validated users (hence the "1").
