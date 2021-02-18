@@ -249,12 +249,14 @@ function verify_code () {
                     echo "${LGRAY}Congratulations,${RESTORE}"
                     echo -e "${YELLOW}\n${username}\n${RESTORE}"
                     echo "${LGRAY}You are now verified!${RESTORE}"
+                    echo "${LGRAY}Your new access will take effect on your next logon!${RESTORE}"
                     echo "${BLUE}###############################################${RESTORE}"
                 fi
             else
                 echo "Congratulations,"
                 echo -e "\n${username}\n"
                 echo "You are now verified!"
+                echo "Your new access will take effect on your next logon!"
             fi
             rm -f $scriptpath/data/pending/$usernumber
             exit
