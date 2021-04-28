@@ -12,7 +12,7 @@ show_ansiart (){
         feh ${tmpfile3} -x -B black -g --insecure --geometry=600x600+15+60
         rm ${tmpfile3}
     else
-        iconv -f 437 "$infile" | pv --quiet --rate-limit 7000
+        iconv -sc -f 437 "$infile" | pv --quiet --rate-limit 7000
     fi
 }
 
